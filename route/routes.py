@@ -1,49 +1,52 @@
-from fastapi import APIRouter
-from models.UserRegistration import User
+from fastapi import APIRouter, HTTPException
+from models.models import User
 from config.database import collection_name
 from schema.schemas import list_User
-from bson import ObjectId
+from models.models import hash_password
 
 router = APIRouter()
+
 
 @router.get('/')
 async def home():
     return {
-        "success" : "Welcome to the home page!"
+        "success": "Welcome to the home page!"
     }
 
-# Get request method
+
+@router.post("/register_user")
+async def register_user(user: User):
+    try:
+        hashed_password = hash_password(user.password)
+
+        user_info = {
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "username": user.username,
+            "email": user.email,
+            "password": hashed_password,
+        }
+
+        result = await collection_name.insert_one(user_info)
+        return {"message": "User registered successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error registering user")
+
+
 @router.get('/users/')
 async def get_users():
     users = list_User(collection_name.find())
     return users
 
 
-@router.get('/users/{id}')
-async def get_user_with_id(id: str):
+@router.get('/users/{username}')
+async def get_user_with_username(username: str):
     users = list_User(collection_name.find())
     for user in users:
-        if user["user_id"] == id:
+        if user["username"] == username:
             return {
-                    "user": user
-                }
+                user["username"] : user
+            }
     return {
-            "error": "User does not exits"
-        }
-
-
-@router.post('/users/add_user')
-async def create_user(user: User):
-    collection_name.insert_one(dict(user))
-
-
-@router.put('/users/update_user/{id}')
-async def update_user(id: str, user: User):
-    collection_name.find_one_and_update(
-        {"_id": ObjectId(id)}, {"$set": dict(user)})
-
-@router.delete('/delete/users')
-async def delete_users():
-      collection_name.delete_many
-
-
+        "error": "User does not exits!"
+    }

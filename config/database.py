@@ -1,6 +1,8 @@
 from pymongo import MongoClient
+from decouple import config
 
-client = MongoClient("mongodb+srv://saais_admin:ZA81qfDASREEZ5qD@saaisdb.dyhcbgz.mongodb.net/?retryWrites=true&w=majority")
+uri = config("uri")
+client = MongoClient(uri)
 
 db = client.user_db
 collection_name = db["user_collections"]
