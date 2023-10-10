@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway:200');
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    width: 100%;
+  }
+  
+  .header .logo {
+    font-family: 'Raleway';
+    letter-spacing: 6px;
+    margin-left: 50px;
+    font-size: 30px;
+    font-weight: 800;
+    color: #f0f0f0;
+  }
+
+  
+  .menu {
+    width: 25%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    margin-right: 40px;
+  }
+  
+  /* Apply the same text color and font-family to menu items and button */
+  .menu-item,
+  .btn {
+    font-size: 18px; /* Increase font size for menu items */
+    font-family: 'DM Sans', sans-serif; /* Apply the desired font-family */
+    color: #f0f0f0; /* Apply the desired text color */
+    font-weight: lighter;
+  }
+  
+  .btn {
+    font-size: 18px;
+    padding: 12px 24px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.3s linear;
+    background-color: #5153f1;
+  }
+  
+  .btn:hover{
+    background-color: #1e147e;
+  }

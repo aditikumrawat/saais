@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Concert+One&display=swap');
+*{
+  margin: 0;
+  padding: 0;
+}
+.content {
+    display: flex;
+    row-gap: 15px;
+    line-height: 1.5;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: column;
+    width: 30%;
+    animation: animateMain 0.5s linear;
+  }
+  @keyframes animateMain{
+    from{
+      transform: translateY(100px) skewY(10deg);
+      opacity: 0;
+    }
+    to{
+      transform: translateY(0px) skewY(0deg);
+      opacity: 1;
+    }
+  }
+  .content-inner-bold{
+    font-size: 3.2rem;
+    font-weight: 200;
+    /* font-family: 'Trirong', serif; */
+    font-family: 'Concert One', cursive;
+    color: #f0f0f0;
+  }
+  .content-inner-smaller{
+    font-size: 2.6rem;
+    font-weight: 200;
+    /* font-family: 'Trirong', serif; */
+    font-family: 'Concert One', cursive;
+    color: #f0f0f0;
+  }
+
+  .content p {
+    font-size: 1.2rem;
+    font-weight: 200;
+    font-family: 'Rubik', sans-serif;
+    color: #f0f0f0;
+  }
+  
+  .content button {
+    width: 150px;
+    padding: 15px 15px;
+    margin-top: 20px;
+    font-family: sans-serif;
+    text-transform: capitalize;
+    font-size: 15px;
+    background-color: #5153f1;
+    border-radius: 30px;
+    transition: all 0.3s linear;
+  }
+  .content button:hover{
+    background-color: #1e147e;
+  }
+
