@@ -10,23 +10,9 @@ const Bundle = () => {
           <span className="loading_ball _a"></span>
           <span className="loading_ball _b"></span>
           <span className="loading_ball _c"></span>
-        </div>
-      </div>
-      <div className="bicycle-bundle">
-        <span className="bundle-head">Bicycle Bundle</span>
-        <div class="wheel">
-          <span class="line"></span>
-          <span class="line"></span>
-          <span class="line"></span>
-          <span class="line"></span>
-          <span class="line"></span>
-          <span class="line"></span>
-          <div class="cabin"></div>
-          <div class="cabin"></div>
-          <div class="cabin"></div>
-          <div class="cabin"></div>
-          <div class="cabin"></div>
-          <div class="cabin"></div>
+          <span className="loading_ball _d"></span>
+          <span className="loading_ball _e"></span>
+          <span className="loading_ball _f"></span>
         </div>
       </div>
       <div className="bulb-bundle">
@@ -40,6 +26,9 @@ const Bundle = () => {
           </div>
           <div class="orbit">
             <span class="electron e3"></span>
+          </div>
+          <div class="orbit">
+            <span class="electron e4"></span>
           </div>
           <div class="core"></div>
         </div>

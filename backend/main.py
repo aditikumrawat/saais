@@ -11,7 +11,6 @@ from route.routes import router
 from schema.schemas import list_User
 from config.database import collection_name
 
-
 SECRET_KEY = config("secret")
 ALGORITHM = config("algorithm")
 ACCESS_TOKEN_EXPIRE_MINUTES = 50
@@ -23,14 +22,14 @@ app = FastAPI()
 
 app.include_router(router)
 
-# origins = ["https://localhost:3000"]
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=origins,
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"]
-# )
+origins = ["https://localhost:3000","*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 
 def verify_password(plain_password, hashed_password):

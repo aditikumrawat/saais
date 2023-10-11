@@ -28,7 +28,6 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 .ball_container_sB {
-
   position: absolute;
   top: calc(50% - 4em);
   left: calc(50% - 16em);
@@ -45,7 +44,7 @@
   border-radius: 50%;
   transform: translate(-4em,0%) scale(0);
   opacity: 0;
-  animation: 4500ms linear infinite visible_orbit;
+  animation: 9s linear infinite visible_orbit;
 }
 ._a{
 background: url(https://f.nooncdn.com/p/v1692599587/N53429237A_1.jpg);
@@ -60,8 +59,43 @@ background-size:cover;
 background:url(https://f.nooncdn.com/p/v1548738129/N20640432A_1.jpg);
 background-size:cover;
 }
-.loading_ball._b { z-index: 1; animation-delay: 1500ms; }
-.loading_ball._c { z-index: 1; animation-delay: 3000ms; }
+._d{
+background:url(https://f.nooncdn.com/p/v1564134963/N28548686A_1.jpg);
+background-size:cover;
+}
+._e{
+background:url(https://f.nooncdn.com/p/v1629782655/N50302339A_1.jpg);
+background-size:cover;
+}
+._f{
+background:url(https://f.nooncdn.com/p/pzsku/Z6DD0308E2AD697E16CFAZ/45/_/1680249668/1ea5a92c-9352-4013-a6d1-a7adf9f9347f.jpg);
+background-size:cover;
+}
+.loading_ball._b {
+  z-index: 1;
+  animation-delay: 1.5s;
+}
+
+.loading_ball._c {
+  z-index: 1;
+  animation-delay: 3s;
+}
+
+.loading_ball._d {
+  z-index: 1;
+  animation-delay: 4.5s;
+}
+
+.loading_ball._e {
+  z-index: 1;
+  animation-delay: 6s;
+}
+
+.loading_ball._f {
+  z-index: 1;
+  animation-delay: 7.5s;
+}
+
 
 @keyframes visible_orbit {
 
@@ -70,145 +104,6 @@ background-size:cover;
   50% { transform: translate(12em,0%) scale(1.5); opacity: 1; }
   75% { transform: translate(32em,0%) scale(1); opacity: 1; }
   100% { transform: translate(24em,0%) scale(0); opacity: 0; }
-}
-.bicycle-bundle{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 40px;
-  flex-direction: column;
-  width: 60%;
-  height:530px;
-  padding-bottom: 100px;
-  background: rgba(73, 69, 69, 0.2);;
-  border-radius: 16px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-.wheel {
-  height: 400px;
-  width: 400px;
-  border: 2px solid white;
-  border-radius: 50%;
-  animation-name: wheel;
- /* used to link a @keyframes rule to a CSS selector*/
-  animation-duration: 20s;
- /*is used to set how long the animation should sequence to complete*/
-  animation-iteration-count: infinite;
- /*sets how many times your animation should repeat*/
-  animation-timing-function: linear;
- /*sets how the animation should progress over time*/
-}
-/*Lines*/
-/*Line1*/
-.line {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  background-color: white;
-  width: 50%;
-  height: 2px;
-  transform-origin: 0% 0%;
- /*determines around which point the element is rotated.offset the origin point by 0% from the left and 0% from the*/
-}
-/*Line2*/
-/*target second line*/
-.line:nth-of-type(2) {
-  transform: rotate(60deg);
- /*will rotate the element around its transform-origin*/
-}
-/*Line3*/
-.line:nth-of-type(3) {
-  transform: rotate(120deg);
-}
-/*Line4*/
-.line:nth-of-type(4) {
-  transform: rotate(180deg);
-}
-/*Line5*/
-.line:nth-of-type(5) {
-  transform: rotate(240deg);
-}
-/*Line6*/
-.line:nth-of-type(6) {
-  transform: rotate(300deg);
-}
-/*Cabins*/
-.cabin {
-  width: 20%;
-  height: 20%;
-  position: absolute;
-  border: 2px solid;
-  border-radius: 5%;
-  transform-origin: 50% 0%;
- /*placing it in the middle of the top edge of the element*/
-  animation: cabins 20s ease-in-out infinite;
-}
-/*Select the cabines*/
-/*Cabin1*/
-.cabin:nth-of-type(1) {
- /*positions the cabins around the wheel*/
- background: url('https://f.nooncdn.com/p/pzsku/Z7624D9B7B97CFB9D746AZ/45/_/1657158008/4e91dc3e-b0c7-432b-9721-ddd969f346ad.jpg');
- background-size: cover;
-  right: -8.5%;
-  top: 50%;
-}
-/*Cabin2*/
-.cabin:nth-of-type(2) {
-  background: url('https://f.nooncdn.com/p/v1603976669/N41664429A_1.jpg');
-  background-size: cover;
-  right: 17%;
-  top: 93.5%;
-}
-/*Cabin3*/
-.cabin:nth-of-type(3) {
-  background: url('https://f.nooncdn.com/p/v1558802361/N24556523A_1.jpg');
-  background-size: cover;
-  right: 67%;
-  top: 93.5%;
-}
-/*Cabin4*/
-.cabin:nth-of-type(4) {
-  background: url('https://f.nooncdn.com/p/v1603976580/N41664405A_1.jpg');
-  background-size: cover;
-  left: -8.5%;
-  top: 50%;
-}
-/*Cabin5*/
-.cabin:nth-of-type(5) {
-  background: url('https://f.nooncdn.com/p/v1556022519/N24055330A_1.jpg');
-  background-size: cover;
-  left: 17%;
-  top: 7%;
-}
-/*Cabin6*/
-.cabin:nth-of-type(6) {
-  background: url('https://f.nooncdn.com/p/v1595430527/N39413893A_1.jpg');
-  background-size: cover;
-  right: 17%;
-  top: 7%;
-}
-/*Wheel Animation*/
-/*@keyframes =>used to define the flow of a CSS animation */
-@keyframes wheel {
-  0% {
-    transform: rotate(0deg);
-   /*will start the animation with no rotation*/
- }
-  100% {
-    transform: rotate(360deg);
-   /*animation will now complete a full rotation*/
- }
-}
-/*Cabins Animation*/
-@keyframes cabins {
-  0% {
-    transform: rotate(0deg);
- }
-  100% {
-    transform: rotate(-360deg);
- }
 }
 
 .bulb-bundle{
@@ -282,22 +177,31 @@ background:url('https://f.nooncdn.com/p/v1545209450/N19905756A_2.jpg');
 	background:url('https://f.nooncdn.com/p/v1599637454/N13597061A_1.jpg');
 	background-size:cover;
 }
+.e4{
+	background:url('https://f.nooncdn.com/p/pzsku/Z48552F4DD11755C5C689Z/45/_/1674114724/3b27dab2-1cb1-4ffd-bff8-3ec1099e8236.jpg');
+	background-size:cover;
+}
  .orbit:nth-child(1) {
-	 transform: rotateZ(60deg) rotateY(70deg);
+	 transform: rotateZ(30deg) rotateY(70deg);
 }
  .orbit:nth-child(1) .electron {
 	 animation-duration: 3.6s;
 }
  .orbit:nth-child(2) {
-	 transform: rotateZ(120deg) rotateY(70deg);
+	 transform: rotateZ(72deg) rotateY(70deg);
 }
  .orbit:nth-child(2) .electron {
 	 animation-duration: 3.7s;
 }
  .orbit:nth-child(3) {
-	 transform: rotateZ(180deg) rotateY(70deg);
+	 transform: rotateZ(108deg) rotateY(70deg);
 }
  .orbit:nth-child(3) .electron {
 	 animation-duration: 3.8s;
 }
- 
+.orbit:nth-child(4) {
+  transform: rotateZ(150deg) rotateY(70deg);
+}
+.orbit:nth-child(4) .electron {
+  animation-duration: 3.9s;
+}

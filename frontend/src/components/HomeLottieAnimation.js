@@ -1,11 +1,11 @@
 import React from 'react'
-import '../css/LottieAnimation.css'
+import '../css/HomeLottieAnimation.css'
 import Lottie from 'lottie-react';
-import animationData from '../assets/animation_lmozjaq0.json'
+import animationData from '../assets/homeLottieAnimation.json'
 
 const LottieAnimation = () => {
   return (
-    <div className='lottie-Animation'>
+    <div className='home-lottie-Animation'>
         <Lottie animationData={animationData}/>
     </div>
   )

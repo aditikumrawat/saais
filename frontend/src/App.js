@@ -5,6 +5,8 @@ import Bundle from "./components/Bundle";
 import { useCallback } from "react";
 import Particles from "react-particles";
 import { loadSlim } from "tsparticles-slim";
+import SignIn from "./components/SignIn";
+import SignUp from "./components/SignUp";
 
 function App() {
   const particlesInit = useCallback(async engine => {
@@ -94,6 +96,8 @@ const particlesLoaded = useCallback(async container => {
       <Routes>
         <Route path="/" element={<Home />}></Route>
         <Route path="/bundle" element={<Bundle />}></Route>
+        <Route path="/signin" element={<SignIn />}></Route>
+        <Route path="/signup" element={<SignUp />}></Route>
       </Routes>
     </BrowserRouter>
   );

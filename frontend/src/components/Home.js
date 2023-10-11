@@ -2,7 +2,7 @@ import React from 'react';
 import '../css/Home.css';
 import Header from '../components/Header';
 import Content from '../components/Content';
-import LottieAnimation from '../components/LottieAnimation';
+import HomeLottieAnimation from "../components/HomeLottieAnimation"
 import Services from '../components/Services';
 import Footer from '../components/Footer';
 
@@ -13,7 +13,7 @@ function Home() {
           <Header />
           <div className='container'>
             <Content />
-            <LottieAnimation/>
+            <HomeLottieAnimation />
           </div>
           <Services/>
           <Footer />
