@@ -11,10 +11,10 @@ class User(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    username: str
 
 class TokenData(BaseModel):
     username: str or None = None
-    
     
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

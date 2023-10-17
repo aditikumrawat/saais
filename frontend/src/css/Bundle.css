@@ -100,10 +100,215 @@ background-size:cover;
 @keyframes visible_orbit {
 
   0% { transform: translate(-4em,0%) scale(0); opacity: 0; }
-  25% { transform: translate(-8em,0%) scale(1); opacity: 1; }
-  50% { transform: translate(12em,0%) scale(1.5); opacity: 1; }
-  75% { transform: translate(32em,0%) scale(1); opacity: 1; }
+  25% { transform: translate(-8em,0%); opacity: 1;box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;  }
+  50% { transform: translate(12em,0%) scale(1.5); opacity: 1;box-shadow: rgba(240, 238, 238, 0.25) 0px 54px 55px, rgba(240, 238, 238, 0.25) 0px -12px 30px, rgba(240, 238, 238, 0.25) 0px 4px 6px, rgba(240, 238, 238, 0.25) 0px 12px 13px, rgba(240, 238, 238, 0.25) 0px -3px 5px; }
+  75% { transform: translate(32em,0%); opacity: 1; box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px; }
   100% { transform: translate(24em,0%) scale(0); opacity: 0; }
+}
+
+.pc-new-bundle{
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  height: fit-content;
+  background: rgba(73, 69, 69, 0.2);;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 15px;
+  border-radius: 40px;
+}
+
+.items{
+  display: grid;
+  width: fit-content;
+  height: fit-content; 
+  padding: 15px;
+  grid-template-columns: auto auto;
+  grid-gap: 7px;
+}
+
+.pc-bundle-head{
+  color: white;
+  font-size: 30px;
+  font-family: 'Concert One', cursive;
+}
+
+.bundle-item{
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+}
+
+/* .bundle-item:first-child{
+  background: url(https://f.nooncdn.com/p/v1692599587/N53429237A_1.jpg);
+  background-size: cover;
+  animation: shuffle1 2s infinite;
+}
+
+.bundle-item:last-child{
+  background: url(https://f.nooncdn.com/p/pzsku/Z77E5CED9CC200662864BZ/45/_/1685605913/bc1e9bf7-d404-4744-b15c-f97f33fedf53.jpg);
+  background-size: cover;
+  animation: shuffle4 2s infinite;
+}
+
+.bundle-item:nth-child(2){
+  background: url(https://f.nooncdn.com/p/v1548738129/N20640432A_1.jpg);
+  background-size: cover;
+  animation: shuffle2 2s infinite;
+}
+
+.bundle-item:nth-child(3){
+  background: url(https://f.nooncdn.com/p/v1564134963/N28548686A_1.jpg);
+  background-size: cover;
+  animation: shuffle3 2s infinite;
+}
+
+@keyframes shuffle1{
+  0%, 100%{
+    transform: translate(0);
+  }
+  25%{
+    transform: translate(87px, 87px);
+  }
+  50%{
+    transform: translate(0, 87px);
+  }
+  75%{
+    transform: translate(87px, 0);
+  }
+}
+
+@keyframes shuffle2{
+  0%, 100%{
+    transform: translate(0);
+  }
+  30%{
+    transform: translate(0);
+  }
+  50%{
+    transform: translate(-87px, 0);
+  }
+  80%{
+    transform: translate(-87px, 0);
+  }
+}
+
+@keyframes shuffle3{
+  0%, 100%{
+    transform: translate(0);
+  }
+  30%{
+    transform: translate(0);
+  }
+  50%{
+    transform: translate(87px, 0);
+  }
+  80%{
+    transform: translate(87px, 0);
+  }
+}
+
+@keyframes shuffle4{
+  0%, 100%{
+    transform: translate(0);
+  }
+  25%{
+    transform: translate(-87px, -87px);
+  }
+  50%{
+    transform: translate(0, -87px);
+  }
+  75%{
+    transform: translate(-87px, 0);
+  }
+} */
+
+.bundle-item:first-child{
+  background: url(https://f.nooncdn.com/p/v1692599587/N53429237A_1.jpg);
+  background-size: cover;
+  animation: shuffle1 2s infinite;
+}
+
+.bundle-item:last-child{
+  background: url(https://f.nooncdn.com/p/pzsku/Z77E5CED9CC200662864BZ/45/_/1685605913/bc1e9bf7-d404-4744-b15c-f97f33fedf53.jpg);
+  background-size: cover;
+  animation: shuffle4 2s infinite;
+}
+
+.bundle-item:nth-child(2){
+  background: url(https://f.nooncdn.com/p/v1548738129/N20640432A_1.jpg);
+  background-size: cover;
+  animation: shuffle2 2s infinite;
+}
+
+.bundle-item:nth-child(3){
+  background: url(https://f.nooncdn.com/p/v1564134963/N28548686A_1.jpg);
+  background-size: cover;
+  animation: shuffle3 2s infinite;
+}
+
+@keyframes shuffle1{
+  0%, 100%{
+    transform: translate(0);
+  }
+  25%{
+    transform: translate(87px, 87px);
+  }
+  50%{
+    transform: translate(0, 87px);
+  }
+  75%{
+    transform: translate(87px, 0);
+  }
+}
+
+@keyframes shuffle2{
+  0%, 100%{
+    transform: translate(0);
+  }
+  30%{
+    transform: translate(0);
+  }
+  50%{
+    transform: translate(-87px, 0);
+  }
+  80%{
+    transform: translate(-87px, 0);
+  }
+}
+
+@keyframes shuffle3{
+  0%, 100%{
+    transform: translate(0);
+  }
+  30%{
+    transform: translate(0);
+  }
+  50%{
+    transform: translate(87px, 0);
+  }
+  80%{
+    transform: translate(87px, 0);
+  }
+}
+
+@keyframes shuffle4{
+  0%, 100%{
+    transform: translate(0);
+  }
+  25%{
+    transform: translate(-87px, -87px);
+  }
+  50%{
+    transform: translate(0, -87px);
+  }
+  75%{
+    transform: translate(-87px,0);
+  }
 }
 
 .bulb-bundle{

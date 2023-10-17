@@ -6,11 +6,11 @@ import HomeLottieAnimation from "../components/HomeLottieAnimation"
 import Services from '../components/Services';
 import Footer from '../components/Footer';
 
-function Home() {
+function Home(props) {
     return (
       <div className='Home'>
         <div className='home-main'>
-          <Header />
+          <Header username={props.username}/>
           <div className='container'>
             <Content />
             <HomeLottieAnimation />

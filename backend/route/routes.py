@@ -12,7 +12,6 @@ def home():
         "success": "Welcome to the home page!"
     }
 
-
 @router.post("/register_user")
 def register_user(user: User):
     try:

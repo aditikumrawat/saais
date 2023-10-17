@@ -46,7 +46,7 @@ const Services = () => {
             <div className='services-heading'>Services</div>
             <div className='services-div'>
               {services.map((service)=>{
-                return <Service service={service}/>
+                return <Service key={service.id} service={service}/>
               })}
             </div>
         </div>

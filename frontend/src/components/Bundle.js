@@ -15,6 +15,15 @@ const Bundle = () => {
           <span className="loading_ball _f"></span>
         </div>
       </div>
+      <div className="pc-new-bundle">
+        <span className="pc-bundle-head">PC Bundle</span>
+        <div className="items">
+          <div className="bundle-item"></div>
+          <div className="bundle-item"></div>
+          <div className="bundle-item"></div>
+          <div className="bundle-item"></div>
+        </div>
+      </div>
       <div className="bulb-bundle">
         <div className="bundle-head">Bulb Bundle</div>
         <div class="atom">

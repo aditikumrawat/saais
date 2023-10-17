@@ -7,8 +7,10 @@ import Particles from "react-particles";
 import { loadSlim } from "tsparticles-slim";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
+import Dashboard from "./components/Dashboard";
 
 function App() {
+
   const particlesInit = useCallback(async engine => {
     console.log(engine);
     await loadSlim(engine);
@@ -98,6 +100,7 @@ const particlesLoaded = useCallback(async container => {
         <Route path="/bundle" element={<Bundle />}></Route>
         <Route path="/signin" element={<SignIn />}></Route>
         <Route path="/signup" element={<SignUp />}></Route>
+        <Route path="/dashboard" element={<Dashboard />}></Route>
       </Routes>
     </BrowserRouter>
   );

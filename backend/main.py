@@ -11,6 +11,7 @@ from route.routes import router
 from schema.schemas import list_User
 from config.database import collection_name
 
+
 SECRET_KEY = config("secret")
 ALGORITHM = config("algorithm")
 ACCESS_TOKEN_EXPIRE_MINUTES = 50
@@ -72,7 +73,7 @@ def create_access_token(data: dict, expires_delta: timedelta or None = None):
 
 
 @app.post("/token", response_model=Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+def login_for_access_token(form_data: OAuth2PasswordRequestForm= Depends()):
     user = authenticate_user(form_data.username, form_data.password)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
@@ -81,5 +82,22 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires)
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token,
+        "username":form_data.username,
+        "token_type": "bearer"
+        }
 
+def is_valid(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return True
+    except JWTError:
+        return False
+
+@app.post("/logout")
+async def logout(token: str = Depends(oauth2_scheme)):
+    if is_valid(token):
+        return {"detail": "Logged out successfully"}
+    else:
+        raise HTTPException(status_code=400, detail="Invalid token")
