@@ -3,15 +3,17 @@
 
 .signin{
   width: 100vw;
-  height: 100vh;
+  height: 90vh;
   display: flex;
+  position: absolute;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 }
 .signin-container{
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-evenly;
   width: 80%;
   height: 600px;
   background: rgba(73, 69, 69, 0.2);;
@@ -22,16 +24,38 @@
 }
 .signin-animation{
   width: 40%;
+  animation: gif 4s linear;
+}
+
+@keyframes gif{
+  0%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
 }
 
 .signin-form{
+  width: 50%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 25px;
+  gap: 30px;
   color: white;
-  width: 50%;
+  animation: form-transition 1s linear;
+}
+
+@keyframes form-transition{
+  0%{
+    transform: translateX(100px);
+    opacity: 0;
+  }
+  100%{
+    transform: translateX(0px);
+    opacity: 1;
+  }
 }
 
 .signin-input{
@@ -70,7 +94,7 @@
 }
 
 .signin-button:hover{
-  background-color: #1e147e;
+  box-shadow: rgba(231, 230, 230, 0.35) 0px 5px 15px;
 }
 
 .signin-welcome{

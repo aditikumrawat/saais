@@ -1,20 +1,5 @@
 .dashboard{
     width: 100vw;
   height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.dashboard-container{
-    display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 80%;
-  height: 600px;
-  background: rgba(73, 69, 69, 0.2);;
-  border-radius: 16px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  position: absolute;
 }

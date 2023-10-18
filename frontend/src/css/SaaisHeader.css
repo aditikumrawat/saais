@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway:200');
+.saais-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 25px 0;
+  }
+  
+  .saais-logo {
+    font-family: 'Raleway';
+    letter-spacing: 6px;
+    margin-left: 50px;
+    font-size: 30px;
+    font-weight: 800;
+    color: #f0f0f0;
+  }
+
+  .saais-link{
+    text-decoration: none;
+    color: white;
+  }

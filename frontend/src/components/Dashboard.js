@@ -1,6 +1,7 @@
 import React from 'react';
 import '../css/Dashboard.css'
 import SignIn from './SignIn';
+import Header from './Header';
 
 const Dashboard = () => {
   const accessToken = window.localStorage.getItem('accessToken');
@@ -9,7 +10,7 @@ const Dashboard = () => {
     <SignIn />
   ) : (
     <div className='dashboard'>
-        <div className='dashboard-container'></div>
+        <Header />
     </div>
   );
 };

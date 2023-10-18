@@ -2,10 +2,9 @@ import '../css/Header.css';
 import { Link } from 'react-router-dom';
 import user_image_header from '../images/user_image_header.jpg'
 
-function Header(props) {
+function Header() {
   const accessToken = window.localStorage.getItem('accessToken');
   const username = window.localStorage.getItem('username');
-  console.log(accessToken);
   return (
     <div className='header'>
       <div className='logo'>SAAIS</div>
@@ -13,7 +12,7 @@ function Header(props) {
         <div className='menu-item'>About us</div>
         {
         accessToken == null ? (
-          <Link to="/signup" className="btn">
+          <Link to="/signin" className="btn">
             Get Started
           </Link>
         ) : (

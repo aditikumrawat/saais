@@ -1,17 +1,122 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway:200');
+
 .signup{
     width: 100%;
-    height: 100vh;
+    height: 90vh;
+    position: absolute;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
 }
 .signup-container{
-    color: white;
-    width: 80%; 
-    height: 600px;
-    background: rgba(73, 69, 69, 0.2);
+  color: white;
+  width: 80%; 
+  height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  background: rgba(73, 69, 69, 0.2);
   border-radius: 16px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.signup-form{
+  width: 50%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  animation: form-transition 1s linear;
+}
+
+@keyframes form-transition{
+  0%{
+    transform: translateX(-100px);
+    opacity: 0;
+  }
+  100%{
+    transform: translateX(0px);
+    opacity: 1;
+  }
+}
+
+.signup-heading-div{
+  padding-bottom: 20px;
+  margin-left: -20px;
+}
+
+.signup-heading{
+  font-size: 35px;
+  font-family: 'Raleway';
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.signup-input{
+  width: 60%;
+  box-sizing: border-box;
+  color: white;
+  padding: 12px 12px;
+  border-radius: 7px;
+  background-color: rgb(67, 66, 66);
+}
+
+.signup-input::placeholder{
+  padding-left: 12px;
+  font-size: 17px;
+  color:white;
+}
+
+.signup-password-div{
+  width: 60%;
+  display: flex;
+}
+
+.signup-eye-button{
+  margin-right: -25px;
+  margin-left: -29px;
+  margin-top: 11px;
+  cursor: pointer;
+}
+
+.signup-input-password{
+  width: 100%;
+}
+
+.signup-button{
+  width:60%;
+  padding: 12px 0px;
+  border-radius: 7px;
+  color: white;
+  font-size: 17px;
+  transition: all 0.3s linear;
+  cursor: pointer;
+  background-color: #2da531;
+}
+
+.signup-button:hover{
+  box-shadow: rgba(231, 230, 230, 0.35) 0px 5px 15px;
+}
+
+.signup-links{
+  text-decoration: none;
+  color: #5153f1;
+}
+.signup-animation{
+  width: 40%;
+  animation: gif 4s linear;
+}
+
+@keyframes gif{
+  0%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
 }

@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import '../css/SignIn.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import SigninLottieAnimation from './SigninLottieAnimation';
+import SaaisHeader from './SaaisHeader';
 
 const SignIn = () => {
   const [username, setUserName] = useState("");
@@ -86,6 +88,7 @@ const SignIn = () => {
 
   return (
     <div className='signin'>
+      <SaaisHeader />
       <div className='signin-container'>
         <div className='signin-animation'>
           <SigninLottieAnimation />
@@ -101,7 +104,7 @@ const SignIn = () => {
           </div>
           <button type="submit" className="signin-button">Login</button>
           <div className='signin-links-div'>
-            <span >Don't have an account? <a className='signin-links' href='/'>Sign up</a></span>
+            <span >Don't have an account? <Link className='signin-links' to='/signup'>Register here</Link></span>
             <span><a className='signin-links' href='/'>Forget password?</a></span>
           </div>
         </form>
