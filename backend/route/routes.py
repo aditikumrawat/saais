@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
-from models.models import User
-from config.database import collection_name
-from schema.schemas import list_User
+from models.models import User, Product
+from config.database import collection_name, products
+from schema.schemas import list_User, list_Product
 from models.models import hash_password
 
 router = APIRouter()
@@ -48,3 +48,47 @@ def get_user_with_username(username: str):
     return {
         "error": "User does not exits!"
     }
+
+
+@router.post('/product/add')
+def add_product(product: Product):
+    try:
+        product_info = {
+            "product_name": product.product_name,
+            "description": product.description,
+            "price": product.price,
+            "tag": product.tag,
+        }
+
+        result = products.insert_one(product_info)
+        return {"message": "Product registered successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error registering product")
+
+@router.post('/products')
+def get_all_products():
+    product_collection = list_Product(products.find())
+    return product_collection
+
+
+@router.put("/products/{product_name}")
+def update_product(product_name: str, updated_product: Product):
+    existing_product = products.find_one({"product_name": product_name})
+    updated_product.product_name = updated_product.product_name.capitalize()
+    if existing_product:
+        products.update_one({"product_name": product_name}, {"$set": updated_product.model_dump()})
+        return {"message": f"Product {product_name} updated successfully"}
+    
+    raise HTTPException(status_code=404, detail=f"Product {product_name} not found")
+
+    
+@router.delete("/products/{product_name}")
+def delete_product(product_name: str):
+    product_name = product_name.capitalize()
+    existing_product = products.find_one({"product_name": product_name})
+    
+    if existing_product:
+        products.delete_one({"product_name": product_name})
+        return {"message": f"Product {product_name} deleted successfully"}
+    
+    raise HTTPException(status_code=404, detail=f"Product {product_name} not found")

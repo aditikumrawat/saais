@@ -16,6 +16,16 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     username: str or None = None
     
+    
+class Product(BaseModel):
+    product_name : str = Field(default=None)
+    description : str = Field(
+        default = None, max_length=300
+    )
+    price : float = Field(default=None)
+    tag : str = Field(default=None)
+    
+    
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def hash_password(password: str) -> str:
