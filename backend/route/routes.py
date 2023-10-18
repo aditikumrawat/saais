@@ -1,10 +1,12 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, UploadFile, File
 from models.models import User, Product
 from config.database import collection_name, products
 from schema.schemas import list_User, list_Product
 from models.models import hash_password
+from secrets import token_hex
 
 router = APIRouter()
+IMAGEDIR = 'images/'
 
 @router.get('/')
 def home():
@@ -18,8 +20,7 @@ def register_user(user: User):
         hashed_password = hash_password(user.password)
 
         user_info = {
-            "first_name": user.first_name,
-            "last_name": user.last_name,
+            "full_name": user.full_name,
             "username": user.username,
             "email": user.email,
             "password": hashed_password,
@@ -31,7 +32,7 @@ def register_user(user: User):
         raise HTTPException(status_code=500, detail="Error registering user")
 
 
-@router.get('/users/')
+@router.get('/users')
 def get_users():
     users = list_User(collection_name.find())
     return users
@@ -50,14 +51,32 @@ def get_user_with_username(username: str):
     }
 
 
+@router.post('/upload_product_image')
+async def upload_image(image: UploadFile = File(...)):
+    check = ['jpg', 'jpeg', 'png']
+    image_ext = image.filename.split('.').pop().lower()
+    if image_ext not in check:
+        return {"message": "Invalid image extension"}
+    
+    image_name = image.filename
+    image_path = f"{image_name}.{image_ext}"
+        
+    with open(image_path, "wb") as image_file:
+        content = await image.read()
+        image_file.write(content)
+        
+    return {"success" : True , "file_path" : image_path, "image_name" : image_name}
+
 @router.post('/product/add')
 def add_product(product: Product):
     try:
+        
         product_info = {
-            "product_name": product.product_name,
+            "product_title": product.product_title,
             "description": product.description,
             "price": product.price,
             "tag": product.tag,
+            "image": product.image
         }
 
         result = products.insert_one(product_info)
@@ -67,28 +86,28 @@ def add_product(product: Product):
 
 @router.post('/products')
 def get_all_products():
-    product_collection = list_Product(products.find())
-    return product_collection
+    product_collections = list_Product(products.find())
+    return product_collections
 
 
-@router.put("/products/{product_name}")
-def update_product(product_name: str, updated_product: Product):
-    existing_product = products.find_one({"product_name": product_name})
-    updated_product.product_name = updated_product.product_name.capitalize()
+@router.put("/products/update/{product_title}")
+def update_product(product_title: str, updated_product: Product):
+    existing_product = products.find_one({"product_name": product_title})
+    updated_product.product_title = updated_product.product_title.capitalize()
     if existing_product:
-        products.update_one({"product_name": product_name}, {"$set": updated_product.model_dump()})
-        return {"message": f"Product {product_name} updated successfully"}
+        products.update_one({"product_title": product_title}, {"$set": updated_product.model_dump()})
+        return {"message": f"Product {product_title} updated successfully"}
     
-    raise HTTPException(status_code=404, detail=f"Product {product_name} not found")
+    raise HTTPException(status_code=404, detail=f"Product {product_title} not found")
 
     
-@router.delete("/products/{product_name}")
-def delete_product(product_name: str):
-    product_name = product_name.capitalize()
-    existing_product = products.find_one({"product_name": product_name})
+@router.delete("/products/delete/{product_title}")
+def delete_product(product_title: str):
+    product_title = product_title.capitalize()
+    existing_product = products.find_one({"product_title": product_title})
     
     if existing_product:
-        products.delete_one({"product_name": product_name})
-        return {"message": f"Product {product_name} deleted successfully"}
+        products.delete_one({"product_title": product_title})
+        return {"message": f"Product {product_title} deleted successfully"}
     
-    raise HTTPException(status_code=404, detail=f"Product {product_name} not found")
+    raise HTTPException(status_code=404, detail=f"Product {product_title} not found")

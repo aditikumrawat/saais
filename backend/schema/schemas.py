@@ -1,8 +1,7 @@
 
 def UserSerializer(user) -> dict:
     return {
-        "first_name" :user["first_name"],
-        "last_name" :user["last_name"],
+        "full_name" :user["full_name"],
         "email" : user["email"],
         "username": user["username"],
         "password" : user["password"]
@@ -16,10 +15,10 @@ def list_User(users) -> list:
 def ProductSerializer(product):
     return {
         "product_id" : str(product["_id"]),
-        "product_name" : product["product_name"],
-        "description": product["product_name"], 
-        "price" : product["product_name"],
-        "tags" : product["product_name"], 
+        "product_title" : product["product_title"],
+        "description": product["description"], 
+        "price" : product["price"],
+        "tag" : product["tag"], 
     }
     
 def list_Product(products) -> list:

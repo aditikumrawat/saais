@@ -1,9 +1,9 @@
 from pydantic import BaseModel, EmailStr, Field
+from fastapi import UploadFile, File
 from passlib.context import CryptContext
 
 class User(BaseModel):
-    first_name: str = Field(default=None)
-    last_name: str = Field(default=None)
+    full_name: str = Field(default=None)
     email: EmailStr = Field(default=None)
     username: str
     password : str
@@ -18,12 +18,13 @@ class TokenData(BaseModel):
     
     
 class Product(BaseModel):
-    product_name : str = Field(default=None)
+    product_title : str = Field(default=None)
     description : str = Field(
         default = None, max_length=300
     )
     price : float = Field(default=None)
     tag : str = Field(default=None)
+    image : str | None
     
     
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
