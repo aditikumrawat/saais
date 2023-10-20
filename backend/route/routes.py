@@ -1,9 +1,9 @@
-from fastapi import APIRouter, HTTPException, UploadFile, File
+from fastapi import APIRouter, HTTPException, UploadFile
+from typing import List
 from models.models import User, Product
-from config.database import collection_name, products
+from config.database import collection_name, products, fs
 from schema.schemas import list_User, list_Product
 from models.models import hash_password
-from secrets import token_hex
 
 router = APIRouter()
 IMAGEDIR = 'images/'
@@ -50,39 +50,32 @@ def get_user_with_username(username: str):
         "error": "User does not exits!"
     }
 
+@router.post('/product/upload_images/')
+async def upload_image(image: List[UploadFile]):
+    try:
+        img_ids = []
+        for img in image:
+            image_data = await img.read()
+            image_id = fs.put(image_data, filename= img.filename)
+            img_ids.append(str(image_id))
 
-@router.post('/upload_product_image')
-async def upload_image(image: UploadFile = File(...)):
-    check = ['jpg', 'jpeg', 'png']
-    image_ext = image.filename.split('.').pop().lower()
-    if image_ext not in check:
-        return {"message": "Invalid image extension"}
-    
-    image_name = image.filename
-    image_path = f"{image_name}.{image_ext}"
-        
-    with open(image_path, "wb") as image_file:
-        content = await image.read()
-        image_file.write(content)
-        
-    return {"success" : True , "file_path" : image_path, "image_name" : image_name}
+        return {"image_id": img_ids}
+    except Exception as e :
+        return None
+
 
 @router.post('/product/add')
 def add_product(product: Product):
     try:
+        product_info = product.dict()
         
-        product_info = {
-            "product_title": product.product_title,
-            "description": product.description,
-            "price": product.price,
-            "tag": product.tag,
-            "image": product.image
-        }
-
         result = products.insert_one(product_info)
+        
         return {"message": "Product registered successfully"}
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail="Error registering product")
+
 
 @router.post('/products')
 def get_all_products():
