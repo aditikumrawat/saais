@@ -32,6 +32,9 @@ class Bundle(BaseModel):
     tag: Optional[str] = Field(default=None)
     products: List[Product]  = []
     
+class Tags(BaseModel):
+    tag_name : str 
+    
     
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

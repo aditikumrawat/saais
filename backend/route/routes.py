@@ -8,20 +8,22 @@ from models.models import hash_password
 router = APIRouter()
 IMAGEDIR = 'images/'
 
+
 @router.get('/')
 def home():
     return {
         "success": "Welcome to the home page!"
     }
 
+
 @router.post("/register_user")
 def register_user(user: User):
     try:
         existing_user = users.find_one({"username": user.username})
-        
+
         if existing_user:
-            return {"message" : "Username already exits."}
-        
+            return {"message": "Username already exits."}
+
         hashed_password = hash_password(user.password)
 
         user_info = {
@@ -39,7 +41,7 @@ def register_user(user: User):
 
 @router.get('/users')
 def get_users():
-    all_users= list_User(users.find())
+    all_users = list_User(users.find())
     return all_users
 
 
@@ -62,18 +64,20 @@ async def upload_image(image: List[UploadFile]):
         img_ids = []
         for img in image:
             image_data = await img.read()
-            image_id = fs.put(image_data, filename= img.filename)
+            image_id = fs.put(image_data, filename=img.filename)
             img_ids.append(str(image_id))
 
         return {"image_id": img_ids}
-    except Exception as e :
+    except Exception as e:
         return None
+
 
 @router.post('/product/add_product')
 def add_product(product: Product):
     try:
         product.product_title = product.product_title.capitalize()
-        existing_product = products.find_one({"product_title": product.product_title})
+        existing_product = products.find_one(
+            {"product_title": product.product_title})
 
         if existing_product:
             return {"message": "Product Already exist."}
@@ -81,7 +85,7 @@ def add_product(product: Product):
         product_info = product.dict()
 
         result = products.insert_one(product_info)
-        
+
         return {"message": "Product registered successfully"}
     except Exception as e:
         print(e)
@@ -103,8 +107,10 @@ def update_product(product_title: str, updated_product: Product):
     if existing_product:
         updated_product.product_title = product_title
         products.update_one({"product_title": product_title}, {
-                            "$set": updated_product.model_dump()})
-        return {"message": f"Product {product_title} updated successfully"}
+                            "$set": updated_product.dict()})
+        updated_data = products.find_one({"product_title": product_title})
+        return {"Updated_data" : updated_data ,
+                "message": f"Product {product_title} updated successfully"}
 
     raise HTTPException(
         status_code=404, detail=f"Product {product_title} not found")
@@ -132,7 +138,7 @@ def add_bundle(bundle: Bundle):
         if existing_bundle:
             return {"message": f"Bundle {bundle['bundle_title']} already exits."}
 
-        bundle_details = bundle.model_dump()
+        bundle_details = bundle.dict()
 
         result = bundles.insert_one(bundle_details)
         result['bundle_title'] = result['bundle_title'].capitalize()
