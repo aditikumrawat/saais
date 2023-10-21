@@ -8,7 +8,6 @@ from models.models import hash_password
 router = APIRouter()
 IMAGEDIR = 'images/'
 
-
 @router.get('/')
 def home():
     return {
@@ -183,8 +182,4 @@ def delete_bundle(bundle_title: str):
         return {"message": f"Bundle {bundle_title} deleted successfully"}
 
     raise HTTPException(
-<<<<<<< HEAD
         status_code=404, detail=f"Bundle {bundle_title} not found")
-=======
-        status_code=404, detail=f"Bundle {bundle_title} not found")
->>>>>>> 0df45d0e143ac6cebe2bf4e96e5dc855802e6667
