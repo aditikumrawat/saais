@@ -182,4 +182,4 @@ def delete_bundle(bundle_title: str):
         return {"message": f"Bundle {bundle_title} deleted successfully"}
 
     raise HTTPException(
-        status_code=404, detail=f"Bundle {bundle_title} not found")
+        status_code=404, detail=f"Bundle {bundle_title} not found")

@@ -19,3 +19,5 @@ fs = gridfs.GridFS(products_db)
 # Bundle DB
 bundle_db = client.bundle_db
 bundles = bundle_db["bundle_collections"]
+
+
