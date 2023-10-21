@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException, UploadFile, File
+from fastapi import APIRouter, HTTPException, UploadFile
+from typing import List
 from models.models import User, Product, Bundle
 from config.database import users, products, fs, bundles
 from schema.schemas import list_User, list_Product, list_Bundle
@@ -13,7 +14,6 @@ def home():
     return {
         "success": "Welcome to the home page!"
     }
-
 
 @router.post("/register_user")
 def register_user(user: User):
@@ -58,28 +58,17 @@ def get_user_with_username(username: str):
 
 
 @router.post('/product/upload_images/')
-async def upload_image(img1: UploadFile = File(None), img2: UploadFile = File(None), img3: UploadFile = File(None), img4: UploadFile = File(None), img5: UploadFile = File(None)):
+async def upload_image(image: List[UploadFile]):
     try:
+        img_ids = []
+        for img in image:
+            image_data = await img.read()
+            image_id = fs.put(image_data, filename= img.filename)
+            img_ids.append(str(image_id))
 
-        image_data = await img1.read()
-        image_id1 = str(fs.put(image_data, filename=img1.filename))
-
-        image_data = await img2.read()
-        image_id2 = fs.put(image_data, filename=img2.filename)
-
-        image_data = await img3.read()
-        image_id3 = fs.put(image_data, filename=img3.filename)
-
-        image_data = await img4.read()
-        image_id4 = fs.put(image_data, filename=img4.filename)
-
-        image_data = await img5.read()
-        image_id5 = fs.put(image_data, filename=img5.filename)
-
-        return {"image_id1": image_id1,  "image_id2": image_id2, "image_id3": image_id3}
-    except Exception as e:
+        return {"image_id": img_ids}
+    except Exception as e :
         return None
-
 
 @router.post('/product/add_product')
 def add_product(product: Product):

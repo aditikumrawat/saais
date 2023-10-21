@@ -1,16 +1,29 @@
 import React from 'react';
 import '../css/Dashboard.css'
-import SignIn from './SignIn';
-import Header from './Header';
+import SaaisHeader from './SaaisHeader';
+import { useEffect } from 'react';
+import { useNavigate} from 'react-router-dom';
 
 const Dashboard = () => {
-  const accessToken = window.localStorage.getItem('accessToken');
+  const navigate = useNavigate();
 
-  return accessToken == null ? (
-    <SignIn />
-  ) : (
+  useEffect(() => {
+    const accessToken = window.localStorage.getItem('accessToken');
+    if (accessToken == null) {
+      navigate('/signin');
+    }
+  }, [navigate]);
+
+  const addProduct = () => {
+    navigate('/addProduct');
+  }
+
+  return (
     <div className='dashboard'>
-        <Header />
+      <SaaisHeader />
+      <div className="dashboard-container">
+          <button className='dashboard-add-product-btn' onClick={addProduct}>Add Product</button>
+      </div>
     </div>
   );
 };

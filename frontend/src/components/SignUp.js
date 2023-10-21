@@ -1,63 +1,48 @@
-import React from "react";
-import { useState, useRef} from "react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
-import "../css/SignUp.css";
+import React, { useState, useRef} from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import axios from "axios";
 import SaaisHeader from "./SaaisHeader";
 import SignupLottieAnimation from "./SignupLottieAnimation";
+import "../css/SignUp.css";
 
 const SignUp = () => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [userName, setUserName] = useState("");
-  const [password,setPassword] = useState("");
-
-  const[passwordVisiblility,setPasswordVisiblility] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName:'',
+    email:'',
+    userName:'',
+    password:'',
+    confirmPassword:''
+  });
+  
   const passwordInput = useRef();
 
   const navigate = useNavigate(); 
 
   const changeVisibility = () => {
-    if(passwordVisiblility === false){
-      setPasswordVisiblility(true);
-      passwordInput.current.type = 'text';
-    }else{
-      setPasswordVisiblility(false);
+    if(passwordInput.current.type === 'text'){
       passwordInput.current.type = 'password';
+    }else{
+      passwordInput.current.type = 'text';
     }
   }
 
   const handleInputChange = (e) => {
-    const {id , value} = e.target;
-    if(id === "firstName"){
-        setFirstName(value);
-    }
-    if(id === "lastName"){
-        setLastName(value);
-    }
-    if(id === "userName"){
-      setUserName(value);
-    }
-    if(id === "email"){
-        setEmail(value);
-    }
-    if(id === "password"){
-        setPassword(value);
-    }
-}
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  }
 
 const handleSubmit  = async() => {
     try {
         const user = {
-          "first_name": firstName,
-          "last_name": lastName,
-          "email": email,
-          "username": userName,
-          "password": password 
+          "full_name": formData.fullName,
+          "email": formData.email,
+          "username": formData.userName,
+          "password": formData.password 
         }
     
         const response = await axios.post('http://localhost:8000/register_user', user, {
@@ -81,16 +66,16 @@ const handleSubmit  = async() => {
                 <div className="signup-heading-div">
                     <span className='signup-heading'>Start Your Journey Here</span>
                 </div>
-                <input className="signup-input" name="firstName" id="firstName" type="text" placeholder="Enter Firstname" value={firstName} onChange = {(e) => handleInputChange(e)}/>
-                <input className="signup-input" name="lastName" id="lastName" type="text" placeholder="Enter Lastname" value={lastName} onChange = {(e) => handleInputChange(e)}/>
-                <input className="signup-input" name="userName" id="userName" type="text" placeholder="Create Username" value={userName} onChange = {(e) => handleInputChange(e)}/>
-                <input className="signup-input" name="email" id="email" type="email" placeholder="Enter email" value={email} onChange = {(e) => handleInputChange(e)}/>
+                <input className="signup-input" name="fullName" type="text" placeholder="Enter full name" value={formData.fullName} onChange = {handleInputChange}/>
+                <input className="signup-input" name="userName" type="text" placeholder="Create Username" value={formData.userName} onChange = {handleInputChange}/>
+                <input className="signup-input" name="email" type="email" placeholder="Enter email" value={formData.email} onChange = {handleInputChange}/>
                 <div className="signup-password-div">
-                    <input className="signup-input signup-input-password" ref={passwordInput} name="password" id="password" type="password" placeholder="Enter password" value={password} onChange = {(e) => handleInputChange(e)}/>
+                    <input className="signup-input signup-input-password" ref={passwordInput} name="password" type="password" placeholder="Enter password" value={formData.password} onChange = {handleInputChange}/>
                     <div className='signup-eye-button'>
                         <FontAwesomeIcon icon={faEye} onClick={changeVisibility}/>
                     </div>
                 </div>
+                <input className="signup-input" name="confirmpassword" type="password" placeholder="Confirm password" value={formData.confirmPassword} onChange = {handleInputChange}/>
                 <button onClick={()=>handleSubmit()} type="submit" className="signup-button">Register</button>
                 <span className="signup-links-div">Already a member? <Link className='signup-links' to='/signin'> Login here</Link></span>
             </form>

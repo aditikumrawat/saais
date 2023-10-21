@@ -8,6 +8,7 @@ import { loadSlim } from "tsparticles-slim";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import Dashboard from "./components/Dashboard";
+import AddProduct from './components/AddProduct';
 
 function App() {
 
@@ -101,6 +102,7 @@ const particlesLoaded = useCallback(async container => {
         <Route path="/signin" element={<SignIn />}></Route>
         <Route path="/signup" element={<SignUp />}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>
+        <Route path="/addProduct" element={<AddProduct />}></Route>
       </Routes>
     </BrowserRouter>
   );
