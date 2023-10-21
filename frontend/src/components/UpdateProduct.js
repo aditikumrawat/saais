@@ -1,106 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Header from './Header';
-import axios from "axios";
-import blankimg from "../images/blankimg.png"
-import '../css/AddProduct.css';
+import React from 'react'
 
-const AddProduct = () => {
-  const [formData, setFormData] = useState({
-    product_title: '',
-    description: '',
-    price: '',
-    tag: '',
-    image: [],
-  });
-
-  const [image_ids,setImageIds] = useState([]);
-  const images = new FormData();
-
-  const fileInput = useRef(null);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleFileChange = (e) => {
-    const files = e.target.files;
-
-    if(files.length > 5){
-      e.target.value = '';
-      alert("Only 5 images accepted.");
-      return;
-    }
-
-    setFormData({
-      ...formData,
-      image : files
-  });
-  };
-
-  const uploadImages = async() => {
-    const files = fileInput.current.files;
-
-    console.log("images are here:",files);
-
-    for(let i = 0;i<files.length;i++){
-      images.append('image', files[i]);
-    }
-    try{
-      await axios.post('http://localhost:8000/product/upload_images/', images, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        }
-      }).then((response) => {
-        setImageIds(response.data.image_id);
-        console.log(response.data.image_id);
-        console.log(image_ids); 
-      })
-    }
-  catch (error) {
-    console.error('Error:', error);
-  }
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    await uploadImages();
-
-    try{
-
-      const product = {
-        "product_title": formData.product_title,
-        "description": formData.description,
-        "price": formData.price,
-        "tag": formData.tag,
-        "image_id": image_ids
-      }
-
-      console.log("product is :", product);
-      
-      const response = await axios.post('http://localhost:8000/product/add_product', product, {
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
-      console.log('Response:', response.data);
-
-      console.log("form data",formData);
-      console.log("image ids :" ,image_ids);
-      
-    }catch (error) {
-      console.error('Error:', error);
-    }
-
-    console.log(images.get('image'));
-    
-  };
-
-  const [slideIndex, setSlideIndex] = useState(1);
+const UpdateProduct = () => {
+    const [slideIndex, setSlideIndex] = useState(1);
 
   const plusSlides = (n) => {
     showSlides(slideIndex + n);
@@ -245,7 +146,7 @@ const AddProduct = () => {
         </div>  
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AddProduct;
+export default UpdateProduct
