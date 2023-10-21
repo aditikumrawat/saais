@@ -1,1 +1,7 @@
 .pyc
+/__pycache__
+
+/config/__pycache__
+/models/__pycache__
+/route/__pycache__
+/schema/__pycache__
