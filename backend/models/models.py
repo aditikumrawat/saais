@@ -2,6 +2,7 @@ from pydantic import BaseModel, EmailStr, Field
 from fastapi import UploadFile
 from passlib.context import CryptContext
 from typing import Optional, List
+from uuid import uuid4
 
 class User(BaseModel):
     full_name: str = Field(default=None)
@@ -16,7 +17,6 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: str or None = None
-    
     
 class Product(BaseModel):
     product_title: Optional[str] = Field(default=None)
