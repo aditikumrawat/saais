@@ -100,4 +100,4 @@ async def logout(token: str = Depends(oauth2_scheme)):
     if is_valid(token):
         return {"detail": "Logged out successfully"}
     else:
-        raise HTTPException(status_code=400, detail="Invalid token")
+        raise HTTPException(status_code=400, detail="Invalid token")

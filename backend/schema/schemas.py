@@ -1,4 +1,3 @@
-
 def UserSerializer(user) -> dict:
     return {
         "full_name" :user["full_name"],
