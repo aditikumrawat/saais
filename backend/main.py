@@ -9,10 +9,7 @@ from models.models import Token, TokenData, User
 from decouple import config
 from route.routes import router
 from schema.schemas import list_User
-from config.database import collection_name
-import base64
-import io
-from PIL import Image
+from config.database import users
 
 
 SECRET_KEY = config("secret")
@@ -45,7 +42,7 @@ def get_password_hash(password):
 
 
 def get_user(username: str):
-    db = list_User(collection_name.find())
+    db = list_User(users.find())
     for user in db:
         if user["username"] == username:
             user_data = user

@@ -24,3 +24,18 @@ def ProductSerializer(product):
 def list_Product(products) -> list:
     registered_products = [ProductSerializer(product) for product in products]
     return registered_products
+
+
+def BundleSerializer(bundle):
+    return {
+        "Bundle_id" : str(bundle["_id"]),
+        "Bundle_title" : bundle["Bundle_title"],
+        "description": bundle["description"], 
+        "price" : bundle["price"],
+        "tag" : bundle["tag"], 
+        "products" : bundle["products"]
+    }
+
+def list_Bundle(bundles) -> list:
+    registered_bundles = [BundleSerializer(bundle) for bundle in bundles]
+    return registered_bundles
