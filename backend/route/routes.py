@@ -72,17 +72,16 @@ async def upload_image(image: List[UploadFile]):
 @router.post('/product/add_product')
 def add_product(product: Product):
     try:
-        existing_product = products.find_one(
-            {"product_title": product["product_title"].capitalize()})
+        product.product_title = product.product_title.capitalize()
+        existing_product = products.find_one({"product_title": product.product_title})
 
         if existing_product:
             return {"message": "Product Already exist."}
 
-        product_info = product.model_dump()
+        product_info = product.dict()
 
         result = products.insert_one(product_info)
-        result["product_title"] = result["product_title"].capitalize()
-
+        
         return {"message": "Product registered successfully"}
     except Exception as e:
         print(e)
