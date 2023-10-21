@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, UploadFile
+from fastapi import APIRouter, HTTPException, UploadFile, File
 from typing import List
 from models.models import User, Product
 from config.database import collection_name, products, fs
@@ -62,7 +62,6 @@ async def upload_image(image: List[UploadFile]):
         return {"image_id": img_ids}
     except Exception as e :
         return None
-
 
 @router.post('/product/add')
 def add_product(product: Product):
