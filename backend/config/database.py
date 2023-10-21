@@ -18,8 +18,6 @@ fs = gridfs.GridFS(products_db)
 
 # Bundle DB
 bundle_db = client.bundle_db
-<<<<<<< HEAD
 bundles = bundle_db["bundle_collections"]
-=======
-bundles = bundle_db["bundle_collections"]
->>>>>>> 0df45d0e143ac6cebe2bf4e96e5dc855802e6667
+
+
