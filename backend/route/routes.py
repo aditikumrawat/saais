@@ -4,6 +4,7 @@ from models.models import User, Product, Bundle
 from config.database import users, products, fs, bundles
 from schema.schemas import list_User, list_Product, list_Bundle
 from models.models import hash_password
+from bson import ObjectId
 
 router = APIRouter()
 IMAGEDIR = 'images/'
@@ -45,13 +46,13 @@ def get_users():
     return all_users
 
 
-@router.get('/users/{username}')
-def get_user_with_username(username: str):
-    users = list_User(users.find())
-    for user in users:
-        if user["username"] == username:
+@router.get('/users/{user_id}')
+def get_user_with_username(user_id: str):
+    all_users = list_User(users.find())
+    for user in all_users:
+        if user["user_id"] == user_id:
             return {
-                user["username"]: user
+                user["user_id"]: user
             }
     return {
         "error": "User does not exits!"
@@ -72,25 +73,36 @@ async def upload_image(image: List[UploadFile]):
         return None
 
 
+
 @router.post('/product/add_product')
 def add_product(product: Product):
     try:
+    
         product.product_title = product.product_title.capitalize()
-        existing_product = products.find_one(
-            {"product_title": product.product_title})
-
-        if existing_product:
-            return {"message": "Product Already exist."}
-
-        product_info = product.dict()
+        if_exist = products.find_one({'product_title' : product.product_title})
+        
+        if if_exist:
+            return {"message" : "Title of product already exist."}
+        
+        product_info = {
+            "product_title": product.product_title,
+            "description": product.description,
+            "price": product.price,
+            "is_available": product.is_available,
+            "tags_id": product.tags_id,
+            "users_id": product.users_id,
+            "images_id": product.images_id,
+        }
 
         result = products.insert_one(product_info)
-
-        return {"message": "Product registered successfully"}
+        id = str(result.inserted_id)
+        
+        return {"product_id" : id, "message": "Product registered successfully"}
     except Exception as e:
-        print(e)
+       
         raise HTTPException(
             status_code=500, detail="Error registering product")
+
 
 
 @router.post('/products')
@@ -99,21 +111,21 @@ def get_all_products():
     return product_collections
 
 
-@router.put("/products/update_product/{product_title}")
-def update_product(product_title: str, updated_product: Product):
-    product_title = product_title.capitalize()
-    existing_product = products.find_one({"product_title": product_title})
+# @router.put("/products/update_product/{product_id}")
+# def update_product(product_id: str, updated_product: Product):
+#     product_id = product_id.capitalize()
+#     existing_product = products.find_one({"product_title": product_title})
+   
+#     print(existing_product)
+#     if existing_product != None:
+#         updated_product.product_title = updated_product.product_title.capitalize()
+#         products.update_one({"_id": existing_product['_id']}, {"$set": updated_product.dict()})
+#         updated_data = products.find_one({"_id": existing_product['_id']})
+#         return {"Updated_data" : updated_data ,
+#                 "message": f"Product {product_title} updated successfully"}
 
-    if existing_product:
-        updated_product.product_title = product_title
-        products.update_one({"product_title": product_title}, {
-                            "$set": updated_product.dict()})
-        updated_data = products.find_one({"product_title": product_title})
-        return {"Updated_data" : updated_data ,
-                "message": f"Product {product_title} updated successfully"}
-
-    raise HTTPException(
-        status_code=404, detail=f"Product {product_title} not found")
+#     raise HTTPException(
+#         status_code=404, detail=f"Product {product_title} not found")
 
 
 @router.delete("/products/delete_product/{product_title}")
@@ -132,8 +144,7 @@ def delete_product(product_title: str):
 @router.post('/Bundle/add_bundle')
 def add_bundle(bundle: Bundle):
     try:
-        existing_bundle = bundles.find_one(
-            {"bundle_title": bundle["bundle_title"]})
+        existing_bundle = bundles.find_one({"bundle_title": bundle["bundle_title"]})
 
         if existing_bundle:
             return {"message": f"Bundle {bundle['bundle_title']} already exits."}
