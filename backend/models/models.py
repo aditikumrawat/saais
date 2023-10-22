@@ -4,41 +4,48 @@ from passlib.context import CryptContext
 from typing import Optional, List
 from uuid import uuid4
 
+
 class User(BaseModel):
     full_name: str = Field(default=None)
     email: EmailStr = Field(default=None)
-    username : str
-    password : str
+    username: str
+    password: str
+
 
 class Token(BaseModel):
     access_token: str
     token_type: str
     username: str
 
+
 class TokenData(BaseModel):
     username: str or None = None
-    
+
+
 class Tag(BaseModel):
-    tag_name : str = Field(default=None)
+    tag_name: str = Field(default=None)
+
 
 class Product(BaseModel):
     product_title: Optional[str] = Field(default=None)
     description: Optional[str] = Field(default=None, max_length=300)
     price: Optional[float] = Field(default=None)
-    is_available : bool = Field(default=False)
-    tags_id : List[str] = Field(default=None)
-    users_id : List[str] = Field(default=None)
+    is_available: bool = Field(default=False)
+    tags_id: List[str] = Field(default=None)
+    users_id: List[str] = Field(default=None)
     images_id: List[str] = Field(default=None)
-    
+
+
 class Bundle(BaseModel):
-    Bundle_title: Optional[str] = Field(default=None)
+    bundle_title: Optional[str] = Field(default=None)
     description: Optional[str] = Field(default=None, max_length=300)
     price: Optional[float] = Field(default=None)
     tag_ids: List[str] = Field(default=None)
     product_ids: List[str] = Field(default=None)
-    
-    
+
+
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 
 def hash_password(password: str) -> str:
     return password_context.hash(password)

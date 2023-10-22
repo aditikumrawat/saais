@@ -112,7 +112,6 @@ def get_all_products():
 @router.put("/products/update_product/{product_id}")
 def update_product(product_id: str, updated_product: Product):
     existing_product = products.find_one({"_id": ObjectId(product_id)})
-    
 
     if existing_product:
         updated_product.product_title = updated_product.product_title.capitalize()
@@ -133,7 +132,7 @@ def update_product(product_id: str, updated_product: Product):
 
 @router.delete("/products/delete_product/{product_id}")
 def delete_product(product_id: str):
-    
+
     existing_product = products.find_one({"_id": ObjectId(product_id)})
 
     if existing_product:
@@ -147,59 +146,71 @@ def delete_product(product_id: str):
 @router.post('/Bundle/add_bundle')
 def add_bundle(bundle: Bundle):
     try:
+        bundle.bundle_title = bundle.bundle_title.capitalize()
         existing_bundle = bundles.find_one(
-            {"bundle_title": bundle["bundle_title"]})
+            {"bundle_title": bundle.bundle_title})
 
         if existing_bundle:
-            return {"message": f"Bundle {bundle['bundle_title']} already exits."}
+            return {"message": f"Bundle title already exits."}
 
-        bundle_details = bundle.dict()
+        bundle_details = {
+            "bundle_title":  bundle.bundle_title,
+            "description": bundle.description,
+            "price": bundle.price,
+            "tag_ids": bundle.tag_ids,
+            "product_ids": bundle.product_ids,
+        }
 
         result = bundles.insert_one(bundle_details)
-        result['bundle_title'] = result['bundle_title'].capitalize()
+        id = str(result.inserted_id)
 
-        return {"message": "Bundle registered successfully"}
+        return {"bundle_id": id, "message": "Bundle registered successfully"}
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="Error registering bundle")
 
 
-@router.get("/Bundles/{bundle_title}")
-def get_bundles(Bundle_title: str):
-    Bundles = list_Bundle(bundles.find())
-    for bundle in Bundles:
-        if bundle["Bundle_title"] == Bundle_title:
+@router.get("/Bundles/{bundle_id}")
+def get_bundles(bundle_id: str):
+    all_bundles = list_Bundle(bundles.find())
+    for bundle in all_bundles:
+        if bundle.bundle_id == bundle_id:
             return {
-                bundle["Bundle_title"]: bundle
+                bundle.bundle_id: bundle
             }
     return {
-        "error": "Invalid Bundle title !"
+        "error": "Invalid Bundle Id!"
     }
 
 
-@router.put("/bundles/update_bundle/{bundle_title}")
-def update_bundle(bundle_title: str, updated_bundle: Bundle):
-    bundle_title = bundle_title.capitalize()
-    existing_bundle = bundles.find_one({"bundle_title": bundle_title})
+@router.put("/bundles/update_bundle/{bundle_id}")
+def update_bundle(bundle_id: str, updated_bundle: Bundle):
+    existing_bundle = bundles.find_one({"_id": bundle_id})
 
     if existing_bundle:
-        updated_bundle.bundle_title = bundle_title
-        bundles.update_one({"bundle_title": bundle_title}, {
-                           "$set": updated_bundle.model_dump()})
-        return {"message": f"Bundle {bundle_title} updated successfully"}
+        updated_bundle.bundle_title = updated_bundle.bundle_title.capitalize()
+        if_exits = bundles.find_one(
+            {"bundle_title": updated_bundle.bundle_title})
+
+        if if_exits:
+            return {"message": "Bundle with similarly title already exists."}
+
+        bundles.update_one({"_id": ObjectId(bundle_id)}, {
+                           "$set": updated_bundle.dict()})
+        return {"bundle_id": bundle_id, "message": f"Bundle updated successfully"}
 
     raise HTTPException(
-        status_code=404, detail=f"Bundle {bundle_title} not found")
+        status_code=404, detail=f"Bundle {bundle_id} not found")
 
 
-@router.delete("/bundles/delete_bundle/{bundle_title}")
-def delete_bundle(bundle_title: str):
-    bundle_title = bundle_title.capitalize()
-    existing_bundle = bundles.find_one({"bundle_title": bundle_title})
+@router.delete("/bundles/delete_bundle/{bundle_id}")
+def delete_bundle(bundle_id: str):
+
+    existing_bundle = bundles.find_one({"_id": ObjectId(bundle_id)})
 
     if existing_bundle:
-        bundles.delete_one({"bundle_title": bundle_title})
-        return {"message": f"Bundle {bundle_title} deleted successfully"}
+        bundles.delete_one({"_id": ObjectId(bundle_id)})
+        return {"message": f"Bundle deleted successfully"}
 
     raise HTTPException(
-        status_code=404, detail=f"Bundle {bundle_title} not found")
+        status_code=404, detail=f"Bundle {bundle_id} not found")
