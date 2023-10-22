@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field
+from datetime import datetime
 from fastapi import UploadFile
 from passlib.context import CryptContext
 from typing import Optional, List
@@ -32,8 +33,11 @@ class Product(BaseModel):
     price: Optional[float] = Field(default=None)
     is_available: bool = Field(default=False)
     tags_id: List[str] = Field(default=None)
-    users_id: List[str] = Field(default=None)
+    user_id: Optional[str] = Field(default=None)
     images_id: List[str] = Field(default=None)
+
+    created_at: datetime
+    updated_at: datetime
 
 
 class Bundle(BaseModel):
@@ -42,6 +46,10 @@ class Bundle(BaseModel):
     price: Optional[float] = Field(default=None)
     tag_ids: List[str] = Field(default=None)
     product_ids: List[str] = Field(default=None)
+    user_id: Optional[str] = Field(default=None)
+
+    created_at: datetime = None
+    updated_at: datetime = None
 
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

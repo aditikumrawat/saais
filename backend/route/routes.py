@@ -5,6 +5,7 @@ from config.database import users, products, fs, bundles, tags
 from schema.schemas import list_User, list_Product, list_Bundle, list_Tag
 from models.models import hash_password
 from bson import ObjectId
+from datetime import datetime
 
 router = APIRouter()
 IMAGEDIR = 'images/'
@@ -78,9 +79,10 @@ def add_product(product: Product):
     try:
 
         product.product_title = product.product_title.capitalize()
-        if_exist = products.find_one({'product_title': product.product_title})
-
-        if if_exist:
+        if_user_exist = products.find_one({'user_id': product.user_id})
+        if_title_exist = products.find_one(
+            {'product_title': product.product_title})
+        if if_user_exist and if_title_exist:
             return {"message": "Title of product already exist."}
 
         product_info = {
@@ -89,8 +91,9 @@ def add_product(product: Product):
             "price": product.price,
             "is_available": product.is_available,
             "tags_id": product.tags_id,
-            "users_id": product.users_id,
+            "user_id": product.user_id,
             "images_id": product.images_id,
+            "created_at": datetime.utcnow(),
         }
 
         result = products.insert_one(product_info)
@@ -128,12 +131,13 @@ def update_product(product_id: str, updated_product: Product):
 
     if existing_product:
         updated_product.product_title = updated_product.product_title.capitalize()
-        if_exist = products.find_one(
+        if_user_exist = products.find_one({'user_id': updated_product.user_id})
+        if_title_exist = products.find_one(
             {'product_title': updated_product.product_title})
-
-        if if_exist:
+        if if_user_exist and if_title_exist:
             return {"message": "Title of product already exist."}
 
+        updated_product.updated_at = datetime.utcnow()
         products.update_one({"_id": existing_product['_id']}, {
                             "$set": updated_product.dict()})
 
@@ -143,13 +147,12 @@ def update_product(product_id: str, updated_product: Product):
         status_code=404, detail=f"Product {product_id} not found")
 
 
-
 # @router.get("/product/search")
 # def search_product(query: str):
 #     try:
-        
+
 #         results = products.find({"$text": {"$search": query}})
-       
+
 #         matching_products = [product for product in results]
 
 #         return {"matching_products": matching_products}
@@ -157,7 +160,6 @@ def update_product(product_id: str, updated_product: Product):
 #         print(e)
 #         raise HTTPException(
 #             status_code=500, detail="Error searching for products")
-
 
 
 @router.delete("/products/delete_product/{product_id}")
@@ -176,19 +178,14 @@ def delete_product(product_id: str):
 @router.post('/bundle/add_bundle')
 def add_bundle(bundle: Bundle):
     try:
-        bundle.bundle_title = bundle.bundle_title.capitalize()
-        existing_bundle = bundles.find_one(
-            {"bundle_title": bundle.bundle_title})
-
-        if existing_bundle:
-            return {"message": f"Bundle title already exits."}
-
         bundle_details = {
             "bundle_title":  bundle.bundle_title,
             "description": bundle.description,
             "price": bundle.price,
             "tag_ids": bundle.tag_ids,
             "product_ids": bundle.product_ids,
+            "user_id": bundle.user_id,
+            "created_at": datetime.utcnow()
         }
 
         result = bundles.insert_one(bundle_details)
@@ -223,13 +220,7 @@ def update_bundle(bundle_id: str, updated_bundle: Bundle):
     existing_bundle = bundles.find_one({"_id": ObjectId(bundle_id)})
 
     if existing_bundle:
-        updated_bundle.bundle_title = updated_bundle.bundle_title.capitalize()
-        if_exits = bundles.find_one(
-            {"bundle_title": updated_bundle.bundle_title})
-
-        if if_exits:
-            return {"message": "Bundle with similarly title already exists."}
-
+        updated_bundle.updated_at = datetime.utcnow()
         bundles.update_one({"_id": ObjectId(bundle_id)}, {
                            "$set": updated_bundle.dict()})
         return {"bundle_id": bundle_id, "message": f"Bundle updated successfully"}
@@ -301,4 +292,3 @@ def delete_tag(tag_id: str):
 
     raise HTTPException(
         status_code=404, detail=f"Bundle {tag_id} not found")
-
