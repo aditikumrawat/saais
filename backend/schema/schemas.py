@@ -34,7 +34,7 @@ def list_Product(products) -> list:
 def BundleSerializer(bundle):
     return {
         "bundle_id": str(bundle["_id"]),
-        "Bundle_title": bundle["Bundle_title"],
+        "bundle_title": bundle["bundle_title"],
         "description": bundle["description"],
         "price": bundle["price"],
         "tag_ids": bundle["tag_ids"],

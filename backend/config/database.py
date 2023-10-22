@@ -21,3 +21,5 @@ bundle_db = client.bundle_db
 bundles = bundle_db["bundle_collections"]
 
 
+tag_db = client.tag_db
+tags = tag_db["tag_collections"]

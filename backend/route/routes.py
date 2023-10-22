@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, UploadFile
 from typing import List
-from models.models import User, Product, Bundle
-from config.database import users, products, fs, bundles
-from schema.schemas import list_User, list_Product, list_Bundle
+from models.models import User, Product, Bundle, Tag
+from config.database import users, products, fs, bundles, tags
+from schema.schemas import list_User, list_Product, list_Bundle, list_Tag
 from models.models import hash_password
 from bson import ObjectId
 
@@ -60,7 +60,7 @@ def get_user_with_username(user_id: str):
 
 
 @router.post('/product/upload_images/')
-async def upload_image(image: List[UploadFile]):
+async def upload_product_image(image: List[UploadFile]):
     try:
         img_ids = []
         for img in image:
@@ -109,6 +109,19 @@ def get_all_products():
     return product_collections
 
 
+@router.post('/products/{product_id}')
+def get_product_by_id(product_id: str):
+    all_products = list_Product(products.find())
+    for product in all_products:
+        if product['product_id'] == product_id:
+            return {
+                "product_details": product
+            }
+    return {
+        "error": "Invalid Product Id!"
+    }
+
+
 @router.put("/products/update_product/{product_id}")
 def update_product(product_id: str, updated_product: Product):
     existing_product = products.find_one({"_id": ObjectId(product_id)})
@@ -143,7 +156,7 @@ def delete_product(product_id: str):
         status_code=404, detail=f"Product {product_id} not found")
 
 
-@router.post('/Bundle/add_bundle')
+@router.post('/bundle/add_bundle')
 def add_bundle(bundle: Bundle):
     try:
         bundle.bundle_title = bundle.bundle_title.capitalize()
@@ -166,17 +179,22 @@ def add_bundle(bundle: Bundle):
 
         return {"bundle_id": id, "message": "Bundle registered successfully"}
     except Exception as e:
-        print(e)
         raise HTTPException(status_code=500, detail="Error registering bundle")
 
 
-@router.get("/Bundles/{bundle_id}")
-def get_bundles(bundle_id: str):
+@router.get("/bundles")
+def get_all_bundles():
+    all_bundles = list_Bundle(bundles.find())
+    return all_bundles
+
+
+@router.get("/bundles/{bundle_id}")
+def get_bundles_by_id(bundle_id: str):
     all_bundles = list_Bundle(bundles.find())
     for bundle in all_bundles:
-        if bundle.bundle_id == bundle_id:
+        if bundle['bundle_id'] == bundle_id:
             return {
-                bundle.bundle_id: bundle
+                "bundle_details": bundle
             }
     return {
         "error": "Invalid Bundle Id!"
@@ -185,7 +203,7 @@ def get_bundles(bundle_id: str):
 
 @router.put("/bundles/update_bundle/{bundle_id}")
 def update_bundle(bundle_id: str, updated_bundle: Bundle):
-    existing_bundle = bundles.find_one({"_id": bundle_id})
+    existing_bundle = bundles.find_one({"_id": ObjectId(bundle_id)})
 
     if existing_bundle:
         updated_bundle.bundle_title = updated_bundle.bundle_title.capitalize()
@@ -214,3 +232,55 @@ def delete_bundle(bundle_id: str):
 
     raise HTTPException(
         status_code=404, detail=f"Bundle {bundle_id} not found")
+
+
+@router.post('/tag/add_tag')
+def add_tag(tag: Tag):
+    try:
+        tag.tag_name = tag.tag_name.capitalize()
+        if_exist = tags.find_one({"tag_name": tag.tag_name})
+        if if_exist:
+            return {"message": "Tag name already exist"}
+
+        tag_info = {
+            "tag_name": tag.tag_name
+        }
+
+        result = tags.insert_one(tag_info)
+        id = str(result.inserted_id)
+
+        return {"tag_id": id, "message": "Successfully added new tag."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error registering Tag")
+
+
+@router.get('/tags')
+def get_all_tags():
+    all_tags = list_Tag(tags.find())
+    return all_tags
+
+
+@router.get('/tags/{tag_id}')
+def get_tag_by_id(tag_id: str):
+    all_tags = list_Tag(tags.find())
+
+    for tag in all_tags:
+        if tag["tag_id"] == tag_id:
+            return {
+                "tag_detail": tag
+            }
+    return {
+        "message": "Details not found."
+    }
+
+
+@router.delete('/delete/{delete_id}')
+def delete_tag(tag_id: str):
+
+    if_exist = tags.find_one({"_id": ObjectId(tag_id)})
+    if if_exist:
+        tags.delete_one({"_id": ObjectId(tag_id)})
+        return {"message": "Successfully deleted"}
+
+    raise HTTPException(
+        status_code=404, detail=f"Bundle {tag_id} not found")
