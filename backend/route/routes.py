@@ -112,34 +112,36 @@ def get_all_products():
 @router.put("/products/update_product/{product_id}")
 def update_product(product_id: str, updated_product: Product):
     existing_product = products.find_one({"_id": ObjectId(product_id)})
-
+    
 
     if existing_product:
         updated_product.product_title = updated_product.product_title.capitalize()
-        if_exist = products.find_one({'product_title': updated_product.product_title})
+        if_exist = products.find_one(
+            {'product_title': updated_product.product_title})
 
         if if_exist:
             return {"message": "Title of product already exist."}
-        
-        products.update_one({"_id": existing_product['_id']}, {"$set": updated_product.dict()})
-        
+
+        products.update_one({"_id": existing_product['_id']}, {
+                            "$set": updated_product.dict()})
+
         return {"Updated_data_id": product_id, "message": f"Product updated successfully"}
 
     raise HTTPException(
         status_code=404, detail=f"Product {product_id} not found")
 
 
-@router.delete("/products/delete_product/{product_title}")
-def delete_product(product_title: str):
-    product_title = product_title.capitalize()
-    existing_product = products.find_one({"product_title": product_title})
+@router.delete("/products/delete_product/{product_id}")
+def delete_product(product_id: str):
+    
+    existing_product = products.find_one({"_id": ObjectId(product_id)})
 
     if existing_product:
-        products.delete_one({"product_title": product_title})
-        return {"message": f"Product {product_title} deleted successfully"}
+        products.delete_one({"_id": ObjectId(product_id)})
+        return {"message": f"Product {product_id} deleted successfully"}
 
     raise HTTPException(
-        status_code=404, detail=f"Product {product_title} not found")
+        status_code=404, detail=f"Product {product_id} not found")
 
 
 @router.post('/Bundle/add_bundle')
