@@ -143,6 +143,23 @@ def update_product(product_id: str, updated_product: Product):
         status_code=404, detail=f"Product {product_id} not found")
 
 
+
+# @router.get("/product/search")
+# def search_product(query: str):
+#     try:
+        
+#         results = products.find({"$text": {"$search": query}})
+       
+#         matching_products = [product for product in results]
+
+#         return {"matching_products": matching_products}
+#     except Exception as e:
+#         print(e)
+#         raise HTTPException(
+#             status_code=500, detail="Error searching for products")
+
+
+
 @router.delete("/products/delete_product/{product_id}")
 def delete_product(product_id: str):
 
@@ -284,3 +301,4 @@ def delete_tag(tag_id: str):
 
     raise HTTPException(
         status_code=404, detail=f"Bundle {tag_id} not found")
+

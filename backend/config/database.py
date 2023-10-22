@@ -14,6 +14,8 @@ users = db["user_collections"]
 products_db = client.product_db
 products = products_db["product_collections"]
 
+# products.create_index([("product_title", "text")])
+
 fs = gridfs.GridFS(products_db)
 
 # Bundle DB
