@@ -246,7 +246,7 @@ def get_bundles_by_id(bundle_id: str):
 @router.get('/bundles/{user_id}')
 def get_bundles_by_user(user_id: str):
     all_bundles = list_Bundle(bundles.find())
-    user_bundles = [{}]
+    user_bundles = []
 
     for bundle in all_bundles:
         if bundle['user_id'] == user_id:
