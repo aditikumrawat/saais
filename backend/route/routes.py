@@ -122,21 +122,10 @@ def add_product(product: Product):
             status_code=500, detail="Error registering product")
 
 
-@router.post('/products')
+@router.get('/products')
 def get_all_products():
     product_collections = list_Product(products.find())
     return product_collections
-
-
-@router.get('/products/{user_id}')
-def get_products_by_user(user_id: str):
-    all_products = list_Product(products.find())
-    user_product = []
-
-    for product in all_products:
-        if product['user_id'] == user_id:
-            user_product.append(product)
-    return user_product
 
 
 @router.get('/products/{product_id}')
@@ -150,6 +139,16 @@ def get_product_by_id(product_id: str):
     return {
         "error": "Invalid Product Id!"
     }
+
+@router.get('/products/users/{user_id}')
+def get_products_by_user(user_id: str):
+    all_products = list_Product(products.find())
+    user_product = []
+
+    for product in all_products:
+        if product['user_id'] == user_id:
+            user_product.append(product)
+    return user_product
 
 
 @router.put("/products/update_product/{product_id}")
@@ -230,7 +229,7 @@ def get_all_bundles():
     return all_bundles
 
 
-@router.get('/bundles/{user_id}')
+@router.get('/bundles/users/{user_id}')
 def get_bundles_by_user(user_id: str):
     all_bundles = list_Bundle(bundles.find())
     user_bundles = []
@@ -252,8 +251,6 @@ def get_bundles_by_id(bundle_id: str):
     return {
         "error": "Invalid Bundle Id!"
     }
-
-
 
 
 
