@@ -1,14 +1,13 @@
 from fastapi import APIRouter, HTTPException, UploadFile
 from typing import List
-from models.models import User, Product, Bundle, Tag
-from config.database import users, products, fs, bundles, tags
-from schema.schemas import list_User, list_Product, list_Bundle, list_Tag
+from models.models import User, Product, Bundle, Tag, Review, Rating
+from config.database import users, products, fs, bundles, tags, reviews, ratings
+from schema.schemas import list_User, list_Product, list_Bundle, list_Tag, list_Rating, list_Review
 from models.models import hash_password
 from bson import ObjectId
 from datetime import datetime
 
 router = APIRouter()
-IMAGEDIR = 'images/'
 
 
 @router.get('/')
@@ -16,7 +15,6 @@ def home():
     return {
         "success": "Welcome to the home page!"
     }
-
 
 @router.post("/register_user")
 def register_user(user: User):
@@ -64,14 +62,14 @@ def get_user_with_username(user_id: str):
     }
 
 
-@router.delete('/users/delete/{user_id}')
+@router.delete('/users/delete_user/{user_id}')
 def delete_user(user_id: str):
     user_exists = users.find_one({'_id': ObjectId(user_id)})
 
     if user_exists:
         users.delete_one({'_id': ObjectId(user_id)})
         return {"message": "User successfully deleted."}
-    
+
     raise HTTPException(
         status_code=404, detail="User not found.")
 
@@ -150,7 +148,7 @@ def update_product(product_id: str, updated_product: Product):
         if_user_exist = products.find_one({'user_id': updated_product.user_id})
         if_title_exist = products.find_one(
             {'product_title': updated_product.product_title})
-        if if_user_exist and if_user_exist['product_title'] != updated_product.product_title and if_title_exist :
+        if if_user_exist and if_user_exist['product_title'] != updated_product.product_title and if_title_exist:
             return {"message": "Title of product already exist."}
 
         updated_product.updated_at = datetime.utcnow()
@@ -257,6 +255,69 @@ def delete_bundle(bundle_id: str):
     raise HTTPException(
         status_code=404, detail=f"Bundle {bundle_id} not found")
 
+
+@router.get('/reviews/')
+def get_all_reviews():
+    all_reviews = list_Review(reviews.find())
+    return all_reviews
+
+
+@router.get('/reviews/{review_id}')
+def get_review_by_id(review_id: str):
+    all_reviews = list_Review(reviews.find())
+
+    for review in all_reviews:
+        if review["review_id"] == review_id:
+            return {"review_details": review}
+
+    raise HTTPException(
+        status_code=404, detail="Review not found."
+    )
+
+
+@router.post('/reviews/add_review')
+def add_review(review: Review):
+    try:
+        review_info = {
+            "text": review.text,
+            "product_id": review.product_id,
+            "reviewer_id": review.reviewer_id
+        }
+        result = reviews.insert_one(review_info)
+        id = str(result.inserted_id)
+
+        return {"message": "Your review successfully added.",
+                "review_id": id
+                }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error adding review")
+
+@router.put('/reviews/update_review/{review_id}')
+def update_review(review_id : str, updated_review : Review):
+    try:
+        if_exists = reviews.find_one({'_id' : ObjectId(review_id)})
+        
+        if if_exists:
+            reviews.update_one({'_id' : ObjectId(review_id)},
+                               {'$set' : updated_review.dict()})
+            return {"message" : "Review successfully updated",
+                    "review_id" : review_id
+                    }
+    except Exception as e:
+        raise HTTPException(status_code=404, detail="Review not found")
+    
+@router.delete('/reviews/delete_review/{review_id}')
+def delete_review(review_id: str):
+    try:
+        if_exists = reviews.find_one({'_id' : ObjectId(review_id)})
+        
+        if if_exists:
+            reviews.delete_one({'_id' : ObjectId(review_id)})
+            return {"message" : "Review successfully deleted"}
+        
+    except Exception as e:
+        raise HTTPException(status_code=404, detail="Review not found")
 
 @router.post('/tags/add_tag')
 def add_tag(tag: Tag):

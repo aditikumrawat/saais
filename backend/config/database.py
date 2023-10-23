@@ -18,5 +18,11 @@ fs = gridfs.GridFS(db)
 # Bundle DB
 bundles = db["bundle_collections"]
 
+# Review DB 
+reviews = db["review_collections"]
+
+# Rating DB
+ratings = db["rating_collections"]
+
 # Tags DB
 tags = db["tag_collections"]

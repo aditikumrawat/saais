@@ -47,6 +47,33 @@ def list_Bundle(bundles) -> list:
     return registered_bundles
 
 
+def ReviewSerializer(review):
+    return {
+        "review_id": str(review['_id']),
+        "reviewer_id": review['reviewer_id'],
+        "product_id": review['product_id']
+    }
+
+
+def list_Review(reviews):
+    all_review = [ReviewSerializer(review) for review in reviews]
+    return all_review
+
+
+def RatingSerializer(rating):
+    return {
+        "rating_id": str(rating['_id']),
+        "rating": rating['rating'],
+        "reviewer_id": rating['reviewer_id'],
+        "product_id": rating['product_id']
+    }
+
+
+def list_Rating(all_ratings):
+    ratings = [RatingSerializer(rating) for rating in all_ratings]
+    return ratings
+
+
 def TagSerializer(tag):
     return {
         "tag_id": str(tag['_id']),
