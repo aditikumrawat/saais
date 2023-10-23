@@ -36,7 +36,11 @@ def register_user(user: User):
         }
 
         result = users.insert_one(user_info)
-        return {"message": "User registered successfully"}
+        id = str(result.inserted_id)
+
+        return {"message": "User registered successfully",
+                "user_id": id,
+                }
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error registering user")
 
@@ -58,6 +62,18 @@ def get_user_with_username(user_id: str):
     return {
         "error": "User does not exits!"
     }
+
+
+@router.delete('/users/delete/{user_id}')
+def delete_user(user_id: str):
+    user_exists = users.find_one({'_id': ObjectId(user_id)})
+
+    if user_exists:
+        users.delete_one({'_id': ObjectId(user_id)})
+        return {"message": "User successfully deleted."}
+    
+    raise HTTPException(
+        status_code=404, detail="User not found.")
 
 
 @router.post('/product/upload_images/')
@@ -134,7 +150,7 @@ def update_product(product_id: str, updated_product: Product):
         if_user_exist = products.find_one({'user_id': updated_product.user_id})
         if_title_exist = products.find_one(
             {'product_title': updated_product.product_title})
-        if if_user_exist and if_title_exist:
+        if if_user_exist and if_user_exist['product_title'] != updated_product.product_title and if_title_exist :
             return {"message": "Title of product already exist."}
 
         updated_product.updated_at = datetime.utcnow()
@@ -242,7 +258,7 @@ def delete_bundle(bundle_id: str):
         status_code=404, detail=f"Bundle {bundle_id} not found")
 
 
-@router.post('/tag/add_tag')
+@router.post('/tags/add_tag')
 def add_tag(tag: Tag):
     try:
         tag.tag_name = tag.tag_name.capitalize()
@@ -282,7 +298,7 @@ def get_tag_by_id(tag_id: str):
     }
 
 
-@router.delete('/delete/{delete_id}')
+@router.delete('/tags/delete/{delete_id}')
 def delete_tag(tag_id: str):
 
     if_exist = tags.find_one({"_id": ObjectId(tag_id)})
