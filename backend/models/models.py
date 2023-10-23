@@ -31,7 +31,7 @@ class Product(BaseModel):
     product_title: Optional[str] = Field(default=None)
     description: Optional[str] = Field(default=None, max_length=300)
     price: Optional[float] = Field(default=None)
-    is_available: bool = Field(default=False)
+    is_available: bool = Field(default=True)
     tags_id: List[str] = Field(default=None)
     user_id: Optional[str] = Field(default=None)
     images_id: List[str] = Field(default=None)
@@ -51,6 +51,22 @@ class Bundle(BaseModel):
     created_at: datetime
     updated_at: datetime
 
+
+class Review(BaseModel):
+    text : Optional[str] = Field(default=None)
+    product_id : str = Field(default=None)
+    reviewer_id : str = Field(default=None)
+
+class Rating(BaseModel):
+    rating : Optional[str] = Field(default=None)
+    product_id : str = Field(default=None)
+    reviewer_id : str = Field(default=None)
+    
+class WatchList(BaseModel):
+    product_id : str = Field(default=None)
+    is_bundle : bool = Field(default=False)
+    notification_id : str = Field(default=None)
+    
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
