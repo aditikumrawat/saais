@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, UploadFile
+from fastapi import APIRouter, HTTPException, UploadFile, Response
 from typing import List
 from models.models import User, Product, Bundle, Tag, Review, Rating
 from config.database import users, products, fs, bundles, tags, reviews, ratings
@@ -87,6 +87,24 @@ async def upload_product_image(image: List[UploadFile]):
         return {"image_id": img_ids}
     except Exception as e:
         return None
+    
+
+
+@router.get("/get-multiple-images/")
+async def get_multiple_images(gridfs_ids: List[str]):
+    try:
+        image_responses = []
+
+        for gridfs_id in gridfs_ids:
+            file_info = fs.get(gridfs_id)
+            image_data = file_info.read()
+            content_type = "image/jpeg"
+
+            image_responses.append({"content": image_data, "media_type": content_type})
+
+        return image_responses
+    except Exception as e:
+        return {"error": "Failed to retrieve images"}
 
 
 @router.post('/product/add_product')
