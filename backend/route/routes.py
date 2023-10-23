@@ -90,7 +90,7 @@ async def upload_product_image(image: List[UploadFile]):
     
 
 
-@router.get("/get_multiple_images/")
+@router.get("/get_multiple_images/{gridfs_ids}")
 async def get_multiple_images(gridfs_ids: List[str]=[]):
     try:
         image_responses = []
