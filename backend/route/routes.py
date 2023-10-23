@@ -134,7 +134,7 @@ def get_products_by_user(user_id: str):
     user_product = [{}]
 
     for product in all_products:
-        if products['user_id'] == user_id:
+        if product['user_id'] == user_id:
             user_product.append(product)
     return user_product
 
