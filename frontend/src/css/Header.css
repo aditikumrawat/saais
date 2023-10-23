@@ -17,6 +17,7 @@
   }
   .header-user{
     display: flex;
+    cursor: pointer;
     align-items: center;
     justify-content: center;
     background-color: #5153f1;

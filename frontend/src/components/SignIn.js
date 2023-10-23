@@ -62,11 +62,10 @@ const SignIn = () => {
       console.log(access_token);
 
       setTimeout(() => {
-        // Remove the token and related data from localStorage
         window.localStorage.removeItem('accessToken');
         window.localStorage.removeItem('username');
         window.localStorage.removeItem('tokenExpiry');
-      }, expiresIn * 1000); // This will run after the token expires (in milliseconds)
+      }, expiresIn * 1000); 
 
       navigate('/');
       
