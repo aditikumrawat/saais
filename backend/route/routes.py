@@ -16,6 +16,7 @@ def home():
         "success": "Welcome to the home page!"
     }
 
+
 @router.post("/register_user")
 def register_user(user: User):
     try:
@@ -108,6 +109,7 @@ def add_product(product: Product):
             "user_id": product.user_id,
             "images_id": product.images_id,
             "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow(),
         }
 
         result = products.insert_one(product_info)
@@ -125,16 +127,17 @@ def get_all_products():
     product_collections = list_Product(products.find())
     return product_collections
 
+
 @router.get('/products/{user_id}')
-def get_products_by_user(user_id : str):
+def get_products_by_user(user_id: str):
     all_products = list_Product(products.find())
     user_product = [{}]
-    
+
     for product in all_products:
         if products['user_id'] == user_id:
             user_product.append(product)
     return user_product
-    
+
 
 @router.post('/products/{product_id}')
 def get_product_by_id(product_id: str):
@@ -209,7 +212,8 @@ def add_bundle(bundle: Bundle):
             "tag_ids": bundle.tag_ids,
             "product_ids": bundle.product_ids,
             "user_id": bundle.user_id,
-            "created_at": datetime.utcnow()
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
         }
 
         result = bundles.insert_one(bundle_details)
@@ -238,15 +242,17 @@ def get_bundles_by_id(bundle_id: str):
         "error": "Invalid Bundle Id!"
     }
 
+
 @router.get('/bundles/{user_id}')
-def get_bundles_by_user(user_id : str):
+def get_bundles_by_user(user_id: str):
     all_bundles = list_Bundle(bundles.find())
     user_bundles = [{}]
-    
+
     for bundle in all_bundles:
         if products['user_id'] == user_id:
             user_bundles.append(bundle)
     return user_bundles
+
 
 @router.put("/bundles/update_bundle/{bundle_id}")
 def update_bundle(bundle_id: str, updated_bundle: Bundle):
@@ -312,31 +318,34 @@ def add_review(review: Review):
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error adding review")
 
+
 @router.put('/reviews/update_review/{review_id}')
-def update_review(review_id : str, updated_review : Review):
+def update_review(review_id: str, updated_review: Review):
     try:
-        if_exists = reviews.find_one({'_id' : ObjectId(review_id)})
-        
+        if_exists = reviews.find_one({'_id': ObjectId(review_id)})
+
         if if_exists:
-            reviews.update_one({'_id' : ObjectId(review_id)},
-                               {'$set' : updated_review.dict()})
-            return {"message" : "Review successfully updated",
-                    "review_id" : review_id
+            reviews.update_one({'_id': ObjectId(review_id)},
+                               {'$set': updated_review.dict()})
+            return {"message": "Review successfully updated",
+                    "review_id": review_id
                     }
     except Exception as e:
         raise HTTPException(status_code=404, detail="Review not found")
-    
+
+
 @router.delete('/reviews/delete_review/{review_id}')
 def delete_review(review_id: str):
     try:
-        if_exists = reviews.find_one({'_id' : ObjectId(review_id)})
-        
+        if_exists = reviews.find_one({'_id': ObjectId(review_id)})
+
         if if_exists:
-            reviews.delete_one({'_id' : ObjectId(review_id)})
-            return {"message" : "Review successfully deleted"}
-        
+            reviews.delete_one({'_id': ObjectId(review_id)})
+            return {"message": "Review successfully deleted"}
+
     except Exception as e:
         raise HTTPException(status_code=404, detail="Review not found")
+
 
 @router.post('/tags/add_tag')
 def add_tag(tag: Tag):
