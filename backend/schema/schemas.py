@@ -21,8 +21,10 @@ def ProductSerializer(product):
         "price": product["price"],
         "is_available": product["is_available"],
         "tags_id": product["tags_id"],
-        "users_id": product["users_id"],
-        "images_id": product["images_id"]
+        "user_id": product["user_id"],
+        "images_id": product["images_id"],
+        "created_at": product["created_at"],
+        "updated_at" : product["updated_at"]
     }
 
 
@@ -38,7 +40,10 @@ def BundleSerializer(bundle):
         "description": bundle["description"],
         "price": bundle["price"],
         "tag_ids": bundle["tag_ids"],
-        "product_ids": bundle["product_ids"]
+        "product_ids": bundle["product_ids"],
+        "user_id" : bundle["user_id"],
+        "created_at" : bundle["created_at"],
+        "updated_at" : bundle["updated_at"]
     }
 
 
