@@ -139,7 +139,7 @@ def get_products_by_user(user_id: str):
     return user_product
 
 
-@router.post('/products/{product_id}')
+@router.get('/products/{product_id}')
 def get_product_by_id(product_id: str):
     all_products = list_Product(products.find())
     for product in all_products:
