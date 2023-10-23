@@ -131,7 +131,7 @@ def get_all_products():
 @router.get('/products/{user_id}')
 def get_products_by_user(user_id: str):
     all_products = list_Product(products.find())
-    user_product = [{}]
+    user_product = []
 
     for product in all_products:
         if product['user_id'] == user_id:
