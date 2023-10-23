@@ -55,6 +55,7 @@ def list_Bundle(bundles) -> list:
 def ReviewSerializer(review):
     return {
         "review_id": str(review['_id']),
+        "text": review["text"],
         "reviewer_id": review['reviewer_id'],
         "product_id": review['product_id']
     }

@@ -230,6 +230,17 @@ def get_all_bundles():
     return all_bundles
 
 
+@router.get('/bundles/{user_id}')
+def get_bundles_by_user(user_id: str):
+    all_bundles = list_Bundle(bundles.find())
+    user_bundles = []
+
+    for bundle in all_bundles:
+        if bundle['user_id'] == user_id:
+            user_bundles.append(bundle)
+            
+    return user_bundles
+
 @router.get("/bundles/{bundle_id}")
 def get_bundles_by_id(bundle_id: str):
     all_bundles = list_Bundle(bundles.find())
@@ -243,16 +254,7 @@ def get_bundles_by_id(bundle_id: str):
     }
 
 
-@router.get('/bundles/{user_id}')
-def get_bundles_by_user(user_id: str):
-    all_bundles = list_Bundle(bundles.find())
-    user_bundles = []
 
-    for bundle in all_bundles:
-        if bundle['user_id'] == user_id:
-            user_bundles.append(bundle)
-            
-    return user_bundles
 
 
 @router.put("/bundles/update_bundle/{bundle_id}")
