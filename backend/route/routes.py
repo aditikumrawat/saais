@@ -249,7 +249,7 @@ def get_bundles_by_user(user_id: str):
     user_bundles = [{}]
 
     for bundle in all_bundles:
-        if products['user_id'] == user_id:
+        if bundle['user_id'] == user_id:
             user_bundles.append(bundle)
     return user_bundles
 
