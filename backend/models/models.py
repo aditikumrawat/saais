@@ -48,8 +48,8 @@ class Bundle(BaseModel):
     product_ids: List[str] = Field(default=None)
     user_id: Optional[str] = Field(default=None)
 
-    created_at: datetime = None
-    updated_at: datetime = None
+    created_at: datetime
+    updated_at: datetime
 
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
