@@ -87,8 +87,6 @@ async def upload_product_image(image: List[UploadFile]):
         return {"image_id": img_ids}
     except Exception as e:
         return None
-    
-
 
 
 @router.get("/get-multiple-images/")
@@ -101,23 +99,24 @@ async def get_multiple_images(gridfs_ids: List[str] = Query([])):
             image_data = file_info.read()
             content_type = "image/jpeg"
 
-            image_responses.append({"content": image_data, "media_type": content_type})
+            image_responses.append(
+                {"content": image_data, "media_type": content_type})
 
         return image_responses
     except Exception as e:
         return {"error": "Failed to retrieve images"}
 
 
-
 @router.post('/product/add_product')
 def add_product(product: Product):
     try:
         product.product_title = product.product_title.capitalize()
-        # if_title_exist = products.find_one(
-        #     {'product_title': product.product_title})
- 
-        # if if_title_exist and product.user_id == if_title_exist["user_id"]:
-        #     return {"message": "Title of product already exist."}
+
+        image_id = product.images_id
+        tag_id = product.tags_id
+
+        if len(image_id) > 5 or len(tag_id) > 5:
+            return {"message": "Image id or tag id can not be more than 5."}
 
         product_info = {
             "product_title": product.product_title,
@@ -133,6 +132,7 @@ def add_product(product: Product):
 
         result = products.insert_one(product_info)
         id = str(result.inserted_id)
+        
 
         return {"product_id": id, "message": "Product registered successfully"}
     except Exception as e:
@@ -159,6 +159,7 @@ def get_product_by_id(product_id: str):
         "error": "Invalid Product Id!"
     }
 
+
 @router.get('/products/users/{user_id}')
 def get_products_by_user(user_id: str):
     all_products = list_Product(products.find())
@@ -179,7 +180,7 @@ def update_product(product_id: str, updated_product: Product):
         if_user_exist = products.find_one({'user_id': updated_product.user_id})
         if_title_exist = products.find_one(
             {'product_title': updated_product.product_title})
- 
+
         if if_title_exist and if_user_exist and str(if_title_exist["_id"]) != product_id:
             return {"message": "Title of product already exist."}
 
@@ -195,15 +196,15 @@ def update_product(product_id: str, updated_product: Product):
 
 @router.get("/products/search_product/{product_title}")
 def search_product(product_title: str):
-    
-    regex_pattern = f"^{product_title}.+" 
-    query = {"product_title": {"$regex": regex_pattern, "$options": "i"}}  
+
+    regex_pattern = f"^{product_title}.+"
+    query = {"product_title": {"$regex": regex_pattern, "$options": "i"}}
 
     all_products = products.find(query)
 
     search_results = [str(product['_id']) for product in all_products]
 
-    return search_results
+    return search_results[0:5]
 
 
 @router.delete("/products/delete_product/{product_id}")
@@ -222,14 +223,17 @@ def delete_product(product_id: str):
 @router.post('/bundle/add_bundle')
 def add_bundle(bundle: Bundle):
     try:
-        
+
         bundle.bundle_title = bundle.bundle_title.capitalize()
-        # if_title_exist = bundles.find_one(
-        #     {'bundle_title': bundle.bundle_title})
- 
-        # if if_title_exist and bundle.user_id == if_title_exist["user_id"]:
-        #     return {"message": "Title of bundle already exist."}
-        
+
+        tag_id = bundle.tag_ids
+        product_ids = bundle.product_ids
+        if len(tag_id) > 5 or len(product_ids) > 5:
+            return {"message": "Tag ids and Product ids can not be more than 5."}
+
+        if bundle.price < 0:
+            return {"message": "Price can not be less negative."}
+
         bundle_details = {
             "bundle_title":  bundle.bundle_title,
             "description": bundle.description,
@@ -263,8 +267,9 @@ def get_bundles_by_user(user_id: str):
     for bundle in all_bundles:
         if bundle['user_id'] == user_id:
             user_bundles.append(bundle)
-            
+
     return user_bundles
+
 
 @router.get("/bundles/{bundle_id}")
 def get_bundles_by_id(bundle_id: str):
@@ -278,17 +283,19 @@ def get_bundles_by_id(bundle_id: str):
         "error": "Invalid Bundle Id!"
     }
 
+
 @router.get("/bundles/search_bundle/{bundle_title}")
 def search_bundle(bundle_title: str):
-    
-    regex_pattern = f"^{bundle_title}.+" 
-    query = {"bundle_title": {"$regex": regex_pattern, "$options": "i"}}  
+
+    regex_pattern = f"^{bundle_title}.+"
+    query = {"bundle_title": {"$regex": regex_pattern, "$options": "i"}}
 
     all_bundles = bundles.find(query)
 
     search_results = [str(bundle["_id"]) for bundle in all_bundles]
 
     return search_results
+
 
 @router.put("/bundles/update_bundle/{bundle_id}")
 def update_bundle(bundle_id: str, updated_bundle: Bundle):
@@ -433,13 +440,13 @@ def delete_tag(tag_id: str):
 
     raise HTTPException(
         status_code=404, detail=f"Bundle {tag_id} not found")
-    
-    
+
+
 @router.get("/tags/search_tag/{tag_name}")
 def search_tag(tag_name: str):
-    
-    regex_pattern = f"^{tag_name}.+" 
-    query = {"tag_name": {"$regex": regex_pattern, "$options": "i"}}  
+
+    regex_pattern = f"^{tag_name}.+"
+    query = {"tag_name": {"$regex": regex_pattern, "$options": "i"}}
 
     result = tags.find(query)
 
