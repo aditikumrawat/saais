@@ -39,6 +39,7 @@ def register_user(user: User):
 
         return {"message": "User registered successfully",
                 "user_id": id,
+                "user_detail": user
                 }
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error registering user")
@@ -131,12 +132,14 @@ def add_product(product: Product):
         }
 
         result = products.insert_one(product_info)
-        id = str(result.inserted_id)
-        
+        product_id = str(result.inserted_id)
 
-        return {"product_id": id, "message": "Product registered successfully"}
+        return {
+            "message": "Product registered successfully",
+            "product_id": product_id,
+            "product_details": product
+        }
     except Exception as e:
-
         raise HTTPException(
             status_code=500, detail="Error registering product")
 
@@ -188,23 +191,54 @@ def update_product(product_id: str, updated_product: Product):
         products.update_one({"_id": existing_product['_id']}, {
                             "$set": updated_product.dict()})
 
-        return {"Updated_data_id": product_id, "message": f"Product updated successfully"}
+        return {"message": f"Product updated successfully",
+                "Updated_data_id": product_id,
+                "product_details": updated_product
+                }
 
     raise HTTPException(
         status_code=404, detail=f"Product {product_id} not found")
 
 
-@router.get("/products/search_product/{product_title}")
-def search_product(product_title: str):
+@router.get("/search/{title}")
+def search_product(title: str):
 
-    regex_pattern = f"^{product_title}.+"
-    query = {"product_title": {"$regex": regex_pattern, "$options": "i"}}
+    regex_pattern = f"^{title}.+"
+    query_products = {"product_title": {"$regex": regex_pattern, "$options": "i"}}
 
-    all_products = products.find(query)
+    all_products = products.find(query_products)
+    
+    query_bundles = {"bundle_title": {"$regex": regex_pattern, "$options": "i"}}
 
-    search_results = [str(product['_id']) for product in all_products]
+    all_bundles = bundles.find(query_bundles)
 
-    return search_results[0:5]
+    search_results_products = [product for product in all_products]
+    
+    search_results_bundles = [bundle for bundle in all_bundles]
+
+    resulted_products = []
+    cnt = 0
+    for product in search_results_products:
+        product['_id'] = str(product['_id'])
+        resulted_products.append(product)
+        cnt += 1
+        if cnt >= 3 :
+            break
+    
+    resulted_bundles = []
+    for bundle in search_results_bundles:
+        bundle['_id'] = str(bundle['_id'])
+        resulted_bundles.append(bundle)
+        cnt += 1
+        if cnt >= 5 :
+            break
+        
+    result = {
+        "products" : resulted_products,
+        "bundles" : resulted_bundles
+    }
+        
+    return result
 
 
 @router.delete("/products/delete_product/{product_id}")
@@ -246,9 +280,12 @@ def add_bundle(bundle: Bundle):
         }
 
         result = bundles.insert_one(bundle_details)
-        id = str(result.inserted_id)
+        bundle_id = str(result.inserted_id)
 
-        return {"bundle_id": id, "message": "Bundle registered successfully"}
+        return { "message": "Bundle registered successfully",
+                "bundle_id": bundle_id,
+                "bundle_details" : bundle 
+                }
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error registering bundle")
 
@@ -284,18 +321,6 @@ def get_bundles_by_id(bundle_id: str):
     }
 
 
-@router.get("/bundles/search_bundle/{bundle_title}")
-def search_bundle(bundle_title: str):
-
-    regex_pattern = f"^{bundle_title}.+"
-    query = {"bundle_title": {"$regex": regex_pattern, "$options": "i"}}
-
-    all_bundles = bundles.find(query)
-
-    search_results = [str(bundle["_id"]) for bundle in all_bundles]
-
-    return search_results
-
 
 @router.put("/bundles/update_bundle/{bundle_id}")
 def update_bundle(bundle_id: str, updated_bundle: Bundle):
@@ -305,7 +330,10 @@ def update_bundle(bundle_id: str, updated_bundle: Bundle):
         updated_bundle.updated_at = datetime.utcnow()
         bundles.update_one({"_id": ObjectId(bundle_id)}, {
                            "$set": updated_bundle.dict()})
-        return {"bundle_id": bundle_id, "message": f"Bundle updated successfully"}
+        return {"message": f"Bundle updated successfully",
+                "bundle_id": bundle_id,
+                "bundle_details" : updated_bundle
+        }
 
     raise HTTPException(
         status_code=404, detail=f"Bundle {bundle_id} not found")
@@ -355,7 +383,8 @@ def add_review(review: Review):
         id = str(result.inserted_id)
 
         return {"message": "Your review successfully added.",
-                "review_id": id
+                "review_id": id,
+                "review_details" : review
                 }
 
     except Exception as e:
@@ -371,7 +400,8 @@ def update_review(review_id: str, updated_review: Review):
             reviews.update_one({'_id': ObjectId(review_id)},
                                {'$set': updated_review.dict()})
             return {"message": "Review successfully updated",
-                    "review_id": review_id
+                    "review_id": review_id,
+                    "review_details" : updated_review
                     }
     except Exception as e:
         raise HTTPException(status_code=404, detail="Review not found")
@@ -405,7 +435,10 @@ def add_tag(tag: Tag):
         result = tags.insert_one(tag_info)
         id = str(result.inserted_id)
 
-        return {"tag_id": id, "message": "Successfully added new tag."}
+        return {"message": "Successfully added new tag.",
+                "tag_id": id,
+                "tag_details" : tag
+                }
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error registering Tag")
 
@@ -448,8 +481,18 @@ def search_tag(tag_name: str):
     regex_pattern = f"^{tag_name}.+"
     query = {"tag_name": {"$regex": regex_pattern, "$options": "i"}}
 
-    result = tags.find(query)
+    all_tags = tags.find(query)
 
-    search_results = [document["tag_name"] for document in result]
-
-    return search_results
+    search_results = [tag for tag in all_tags]
+    
+    cnt = 0
+    final_searched_list = []
+    
+    for tag in search_results:
+        tag['_id'] = str(tag['_id'])
+        final_searched_list.append(tag)
+        cnt += 1
+        if cnt >= 5 :
+            break
+    
+    return final_searched_list
