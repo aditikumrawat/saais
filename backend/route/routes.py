@@ -201,7 +201,7 @@ def search_product(product_title: str):
 
     all_products = products.find(query)
 
-    search_results = [product["product_title"] for product in all_products]
+    search_results = [str(product['_id']) for product in all_products]
 
     return search_results
 
