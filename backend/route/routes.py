@@ -117,7 +117,8 @@ def add_product(product: Product):
         if_user_exist = products.find_one({'user_id': product.user_id})
         if_title_exist = products.find_one(
             {'product_title': product.product_title})
-        if if_user_exist and if_title_exist:
+ 
+        if if_title_exist and if_user_exist :
             return {"message": "Title of product already exist."}
 
         product_info = {
@@ -180,7 +181,8 @@ def update_product(product_id: str, updated_product: Product):
         if_user_exist = products.find_one({'user_id': updated_product.user_id})
         if_title_exist = products.find_one(
             {'product_title': updated_product.product_title})
-        if if_user_exist and if_user_exist['product_title'] != updated_product.product_title and if_title_exist:
+ 
+        if if_title_exist and if_user_exist and str(if_title_exist["_id"]) != product_id:
             return {"message": "Title of product already exist."}
 
         updated_product.updated_at = datetime.utcnow()
