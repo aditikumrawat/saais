@@ -112,14 +112,12 @@ async def get_multiple_images(gridfs_ids: List[str] = Query([])):
 @router.post('/product/add_product')
 def add_product(product: Product):
     try:
-
         product.product_title = product.product_title.capitalize()
-        if_user_exist = products.find_one({'user_id': product.user_id})
-        if_title_exist = products.find_one(
-            {'product_title': product.product_title})
+        # if_title_exist = products.find_one(
+        #     {'product_title': product.product_title})
  
-        if if_title_exist and if_user_exist :
-            return {"message": "Title of product already exist."}
+        # if if_title_exist and product.user_id == if_title_exist["user_id"]:
+        #     return {"message": "Title of product already exist."}
 
         product_info = {
             "product_title": product.product_title,
@@ -195,19 +193,17 @@ def update_product(product_id: str, updated_product: Product):
         status_code=404, detail=f"Product {product_id} not found")
 
 
-# @router.get("/product/search")
-# def search_product(query: str):
-#     try:
+@router.get("/products/search_product/{product_title}")
+def search_product(product_title: str):
+    
+    regex_pattern = f"^{product_title}.+" 
+    query = {"product_title": {"$regex": regex_pattern, "$options": "i"}}  
 
-#         results = products.find({"$text": {"$search": query}})
+    all_products = products.find(query)
 
-#         matching_products = [product for product in results]
+    search_results = [product["product_title"] for product in all_products]
 
-#         return {"matching_products": matching_products}
-#     except Exception as e:
-#         print(e)
-#         raise HTTPException(
-#             status_code=500, detail="Error searching for products")
+    return search_results
 
 
 @router.delete("/products/delete_product/{product_id}")
@@ -226,6 +222,14 @@ def delete_product(product_id: str):
 @router.post('/bundle/add_bundle')
 def add_bundle(bundle: Bundle):
     try:
+        
+        bundle.bundle_title = bundle.bundle_title.capitalize()
+        # if_title_exist = bundles.find_one(
+        #     {'bundle_title': bundle.bundle_title})
+ 
+        # if if_title_exist and bundle.user_id == if_title_exist["user_id"]:
+        #     return {"message": "Title of bundle already exist."}
+        
         bundle_details = {
             "bundle_title":  bundle.bundle_title,
             "description": bundle.description,
@@ -274,7 +278,17 @@ def get_bundles_by_id(bundle_id: str):
         "error": "Invalid Bundle Id!"
     }
 
+@router.get("/bundles/search_bundle/{bundle_title}")
+def search_bundle(bundle_title: str):
+    
+    regex_pattern = f"^{bundle_title}.+" 
+    query = {"bundle_title": {"$regex": regex_pattern, "$options": "i"}}  
 
+    result = bundles.find(query)
+
+    search_results = [document["bundle_title"] for document in result]
+
+    return search_results
 
 @router.put("/bundles/update_bundle/{bundle_id}")
 def update_bundle(bundle_id: str, updated_bundle: Bundle):
@@ -419,3 +433,16 @@ def delete_tag(tag_id: str):
 
     raise HTTPException(
         status_code=404, detail=f"Bundle {tag_id} not found")
+    
+    
+@router.get("/tags/search_tag/{tag_name}")
+def search_tag(tag_name: str):
+    
+    regex_pattern = f"^{tag_name}.+" 
+    query = {"tag_name": {"$regex": regex_pattern, "$options": "i"}}  
+
+    result = tags.find(query)
+
+    search_results = [document["tag_name"] for document in result]
+
+    return search_results
