@@ -284,9 +284,9 @@ def search_bundle(bundle_title: str):
     regex_pattern = f"^{bundle_title}.+" 
     query = {"bundle_title": {"$regex": regex_pattern, "$options": "i"}}  
 
-    result = bundles.find(query)
+    all_bundles = bundles.find(query)
 
-    search_results = [document["bundle_title"] for document in result]
+    search_results = [str(bundle["_id"]) for bundle in all_bundles]
 
     return search_results
 
