@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException, UploadFile, Response, Query
+from fastapi import APIRouter, HTTPException, UploadFile
+from starlette.responses import FileResponse
 from typing import List
 from models.models import User, Product, Bundle, Tag, Review, Rating
 from config.database import users, products, fs, bundles, tags, reviews, ratings
@@ -6,6 +7,8 @@ from schema.schemas import list_User, list_Product, list_Bundle, list_Tag, list_
 from models.models import hash_password
 from bson import ObjectId
 from datetime import datetime
+from starlette.responses import StreamingResponse
+import io
 
 router = APIRouter()
 
@@ -90,22 +93,22 @@ async def upload_product_image(image: List[UploadFile]):
         return None
 
 
-@router.get("/get-multiple-images/")
-async def get_multiple_images(gridfs_ids: List[str] = Query([])):
-    try:
-        image_responses = []
+# @router.get("/get-multiple-images/")
+# async def get_multiple_images(gridfs_ids: List[str] = Query([])):
+#     try:
+#         image_responses = []
 
-        for gridfs_id in gridfs_ids:
-            file_info = fs.get(gridfs_id)
-            image_data = file_info.read()
-            content_type = "image/jpeg"
+#         for gridfs_id in gridfs_ids:
+#             file_info = fs.get(gridfs_id)
+#             image_data = file_info.read()
+#             content_type = "image/jpeg"
 
-            image_responses.append(
-                {"content": image_data, "media_type": content_type})
+#             image_responses.append(
+#                 {"content": image_data, "media_type": content_type})
 
-        return image_responses
-    except Exception as e:
-        return {"error": "Failed to retrieve images"}
+#         return image_responses
+#     except Exception as e:
+#         return {"error": "Failed to retrieve images"}
 
 
 @router.post('/product/add_product')
@@ -224,7 +227,7 @@ def search_product(title: str):
         product['_id'] = str(product['_id'])
         resulted_products.append(product)
         cnt += 1
-        if cnt >= 3:
+        if cnt >= 5:
             break
 
     resulted_bundles = []
@@ -232,7 +235,7 @@ def search_product(title: str):
         bundle['_id'] = str(bundle['_id'])
         resulted_bundles.append(bundle)
         cnt += 1
-        if cnt >= 5:
+        if cnt >= 10:
             break
 
     result = {
@@ -491,7 +494,7 @@ def search_tag(tag_name: str):
         tag['_id'] = str(tag['_id'])
         final_searched_list.append(tag)
         cnt += 1
-        if cnt >= 5:
+        if cnt >= 10:
             break
 
     return final_searched_list
@@ -582,7 +585,7 @@ def searching_rating_by_product_id(product_id: str):
         if rating['product_id'] == product_id:
             result.append(rating)
             cnt += 1
-            if cnt >= 5:
+            if cnt >= 10:
                 break
 
     return result
@@ -598,7 +601,35 @@ def searching_rating_by_product_id(user_id: str):
         if rating['reviewer_id'] == user_id:
             result.append(rating)
             cnt += 1
-            if cnt >= 5:
+            if cnt >= 10:
                 break
 
     return result
+
+
+# @router.get("/get_image/{image_id}")
+# async def get_image(image_id: str):
+#     try:
+#         file = fs.get(ObjectId(image_id))
+
+#         image_data = file.read()
+        
+#         return StreamingResponse(io.BytesIO(image_data), media_type="image/jpeg")
+
+#     except FileNotFoundError:
+#         raise HTTPException(status_code=404, detail="Image not found")
+
+@router.get("/get_images/")
+async def get_images(image_ids: list[str]):
+    try:
+        image_responses = []
+        
+        for image_id in image_ids:
+            file = fs.get(ObjectId(image_id))
+            image_data = file.read()
+            image_responses.append(StreamingResponse(io.BytesIO(image_data), media_type="image/jpeg"))
+
+        return image_responses
+
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Image not found")
