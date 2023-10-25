@@ -204,16 +204,18 @@ def update_product(product_id: str, updated_product: Product):
 def search_product(title: str):
 
     regex_pattern = f"^{title}.+"
-    query_products = {"product_title": {"$regex": regex_pattern, "$options": "i"}}
+    query_products = {"product_title": {
+        "$regex": regex_pattern, "$options": "i"}}
 
     all_products = products.find(query_products)
-    
-    query_bundles = {"bundle_title": {"$regex": regex_pattern, "$options": "i"}}
+
+    query_bundles = {"bundle_title": {
+        "$regex": regex_pattern, "$options": "i"}}
 
     all_bundles = bundles.find(query_bundles)
 
     search_results_products = [product for product in all_products]
-    
+
     search_results_bundles = [bundle for bundle in all_bundles]
 
     resulted_products = []
@@ -222,22 +224,22 @@ def search_product(title: str):
         product['_id'] = str(product['_id'])
         resulted_products.append(product)
         cnt += 1
-        if cnt >= 3 :
+        if cnt >= 3:
             break
-    
+
     resulted_bundles = []
     for bundle in search_results_bundles:
         bundle['_id'] = str(bundle['_id'])
         resulted_bundles.append(bundle)
         cnt += 1
-        if cnt >= 5 :
+        if cnt >= 5:
             break
-        
+
     result = {
-        "products" : resulted_products,
-        "bundles" : resulted_bundles
+        "products": resulted_products,
+        "bundles": resulted_bundles
     }
-        
+
     return result
 
 
@@ -282,9 +284,9 @@ def add_bundle(bundle: Bundle):
         result = bundles.insert_one(bundle_details)
         bundle_id = str(result.inserted_id)
 
-        return { "message": "Bundle registered successfully",
+        return {"message": "Bundle registered successfully",
                 "bundle_id": bundle_id,
-                "bundle_details" : bundle 
+                "bundle_details": bundle
                 }
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error registering bundle")
@@ -319,7 +321,6 @@ def get_bundles_by_id(bundle_id: str):
     }
 
 
-
 @router.put("/bundles/update_bundle/{bundle_id}")
 def update_bundle(bundle_id: str, updated_bundle: Bundle):
     existing_bundle = bundles.find_one({"_id": ObjectId(bundle_id)})
@@ -330,8 +331,8 @@ def update_bundle(bundle_id: str, updated_bundle: Bundle):
                            "$set": updated_bundle.dict()})
         return {"message": f"Bundle updated successfully",
                 "bundle_id": bundle_id,
-                "bundle_details" : updated_bundle
-        }
+                "bundle_details": updated_bundle
+                }
 
     raise HTTPException(
         status_code=404, detail=f"Bundle {bundle_id} not found")
@@ -382,7 +383,7 @@ def add_review(review: Review):
 
         return {"message": "Your review successfully added.",
                 "review_id": id,
-                "review_details" : review
+                "review_details": review
                 }
 
     except Exception as e:
@@ -399,7 +400,7 @@ def update_review(review_id: str, updated_review: Review):
                                {'$set': updated_review.dict()})
             return {"message": "Review successfully updated",
                     "review_id": review_id,
-                    "review_details" : updated_review
+                    "review_details": updated_review
                     }
     except Exception as e:
         raise HTTPException(status_code=404, detail="Review not found")
@@ -435,7 +436,7 @@ def add_tag(tag: Tag):
 
         return {"message": "Successfully added new tag.",
                 "tag_id": id,
-                "tag_details" : tag
+                "tag_details": tag
                 }
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error registering Tag")
@@ -482,15 +483,122 @@ def search_tag(tag_name: str):
     all_tags = tags.find(query)
 
     search_results = [tag for tag in all_tags]
-    
+
     cnt = 0
     final_searched_list = []
-    
+
     for tag in search_results:
         tag['_id'] = str(tag['_id'])
         final_searched_list.append(tag)
         cnt += 1
-        if cnt >= 5 :
+        if cnt >= 5:
             break
-    
+
     return final_searched_list
+
+
+@router.post('/ratings/add_rating')
+def add_rating(rating: Rating):
+    try:
+
+        if rating.rating > 5 or rating.rating < 0:
+            return {"message": "Invalid rating!"}
+
+        rating_info = {
+            "rating": rating.rating,
+            "product_id": rating.product_id,
+            "reviewer_id": rating.reviewer_id
+        }
+
+        result = ratings.insert_one(rating_info)
+        rating_id = str(result.inserted_id)
+
+        return {"message": "Successfully rating added.",
+                "rating_id": rating_id,
+                "rating_details":  rating
+                }
+    except Exception as e:
+        raise Exception(status_code=500, detail="Error while adding rating")
+
+
+@router.get('/ratings/')
+def get_all_ratings():
+    all_ratings = list_Rating(ratings.find())
+    return all_ratings
+
+
+@router.get('/ratings/{rating_id}')
+def get_rating_by_id(rating_id: str):
+    all_ratings = list_Rating(ratings.find())
+
+    for rating in all_ratings:
+        if rating['rating_id'] == rating_id:
+            return rating
+
+    raise HTTPException(status_code=404, detail="Rating detail not found.")
+
+
+@router.put('/rating/update_rating/{rating_id}')
+def update_rating(rating_id: str, updated_rating: Rating):
+    if_exist = ratings.find_one({"_id": ObjectId(rating_id)})
+
+    if if_exist:
+
+        if updated_rating.rating > 5 or updated_rating.rating < 0:
+            return {"message": "Invalid rating!"}
+
+        ratings.update_one({"_id": ObjectId(rating_id)},
+                           {'$set': updated_rating.dict()})
+
+        return {"message": "Successfully updated rating.",
+                "rating_id": rating_id,
+                "rating_details": updated_rating
+                }
+
+    raise Exception(status_code=404, detail="Rating details not found.")
+
+
+@router.delete('/ratings/delete_rating/{rating_id}')
+def delete_rating_by_rating_id(rating_id: str):
+
+    exists = ratings.find_one({'_id': ObjectId(rating_id)})
+
+    if exists:
+        ratings.delete_one({'_id': ObjectId(rating_id)})
+        return {"message": "Rating successfully deleted"}
+
+    raise HTTPException(
+        status_code=404, detail="Rating details not found"
+    )
+
+
+@router.get('/ratings/products/{product_id}')
+def searching_rating_by_product_id(product_id: str):
+    all_rating = list_Rating(ratings.find())
+
+    result = []
+    cnt = 0
+    for rating in all_rating:
+        if rating['product_id'] == product_id:
+            result.append(rating)
+            cnt += 1
+            if cnt >= 5:
+                break
+
+    return result
+
+
+@router.get('/ratings/users/{user_id}')
+def searching_rating_by_product_id(user_id: str):
+    all_rating = list_Rating(ratings.find())
+
+    result = []
+    cnt = 0
+    for rating in all_rating:
+        if rating['reviewer_id'] == user_id:
+            result.append(rating)
+            cnt += 1
+            if cnt >= 5:
+                break
+
+    return result

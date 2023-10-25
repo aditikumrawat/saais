@@ -53,12 +53,12 @@ class Bundle(BaseModel):
 
 
 class Review(BaseModel):
-    text : Optional[str] = Field(default=None)
+    text : str = Field(default=None)
     product_id : str = Field(default=None)
     reviewer_id : str = Field(default=None)
 
 class Rating(BaseModel):
-    rating : Optional[str] = Field(default=None)
+    rating : int = Field(default=None)
     product_id : str = Field(default=None)
     reviewer_id : str = Field(default=None)
     
