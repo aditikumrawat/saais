@@ -313,9 +313,7 @@ def get_bundles_by_id(bundle_id: str):
     all_bundles = list_Bundle(bundles.find())
     for bundle in all_bundles:
         if bundle['bundle_id'] == bundle_id:
-            return {
-                "bundle_details": bundle
-            }
+            return bundle
     return {
         "error": "Invalid Bundle Id!"
     }
@@ -364,7 +362,7 @@ def get_review_by_id(review_id: str):
 
     for review in all_reviews:
         if review["review_id"] == review_id:
-            return {"review_details": review}
+            return review
 
     raise HTTPException(
         status_code=404, detail="Review not found."
