@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Header from "./Header";
-import blankimg from "../images/blankimg.png";
+// import blankimg from "../images/blankimg.png";
 import "../css/AddProduct.css";
 
-const UpdateProduct = () => {
+const UpdateProduct =  () => {
+  let image_ids = [];
+  const productId = "65368dd12b5d670ad2e79765";
+
   const [formData, setFormData] = useState({
     product_title: "",
     description: "",
@@ -15,7 +18,41 @@ const UpdateProduct = () => {
     image: [],
   });
 
-  let image_ids = [];
+  useEffect(() =>{
+    try {
+      axios
+        .get(`http://localhost:8000/products/${productId}`)
+        .then((response) => {
+          console.log(response.data);
+          setFormData({
+            product_title: response.data.product_details.product_title,
+            description: response.data.product_details.description,
+            price: response.data.product_details.price,
+            tagId: response.data.product_details.tags_id,
+            user_id: response.data.product_details.user_id,
+            isAvailable: response.data.product_details.is_available
+          });
+          // image_ids = response.data.product_details.images_id;
+        });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+
+    // try {
+    //   axios
+    //     .get("http://localhost:8000/get-multiple-images/",image_ids , {
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //     })
+    //     .then((response) => {
+    //       console.log(response.data);
+    //     });
+    // } catch (error) {
+    //   console.error("Error:", error);
+    // } 
+  }, [productId])
+
   const images = new FormData();
 
   const fileInput = useRef(null);
@@ -43,7 +80,12 @@ const UpdateProduct = () => {
     });
   };
 
-  const handleSubmit = async () => {
+  const handleCheckbox = () => {
+      setFormData({ ...formData, isAvailable: !formData.isAvailable })
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     const files = fileInput.current.files;
 
     for (let i = 0; i < files.length; i++) {
@@ -66,20 +108,21 @@ const UpdateProduct = () => {
 
     try {
       const product = {
-        "product_title": formData.product_title,
-        "description": formData.description,
-        "price": formData.price,
-        "is_available": formData.isAvailable,
-        "tags_id": formData.tagId,
-        "images_id": image_ids,
-        "user_id": "65327386a23a8ce9dbade6ab"
+        product_title: formData.product_title,
+        description: formData.description,
+        price: formData.price,
+        is_available: formData.isAvailable,
+        tags_id: formData.tagId,
+        images_id: image_ids,
+        user_id: "65327386a23a8ce9dbade6ab",
+        created_at: "2023-10-22T17:23:56.658Z",
+        updated_at: "2023-10-22T17:23:56.658Z",
       };
 
       console.log("product is :", product);
 
-      const response = await axios.post(
-        "http://localhost:8000/product/add_product",
-        product,
+      const response = await axios.put(
+        `http://localhost:8000/products/update_product/${productId}`, product,
         {
           headers: {
             "Content-Type": "application/json",
@@ -92,45 +135,45 @@ const UpdateProduct = () => {
     }
   };
 
-  const [slideIndex, setSlideIndex] = useState(1);
+  // const [slideIndex, setSlideIndex] = useState(1);
 
-  const plusSlides = (n) => {
-    showSlides(slideIndex + n);
-  };
+  // const plusSlides = (n) => {
+  //   showSlides(slideIndex + n);
+  // };
 
-  const currentSlide = (n) => {
-    showSlides(n);
-  };
+  // const currentSlide = (n) => {
+  //   showSlides(n);
+  // };
 
-  const showSlides = (n) => {
-    setSlideIndex(n);
-  };
+  // const showSlides = (n) => {
+  //   setSlideIndex(n);
+  // };
 
-  const slidesRef = useRef([]);
-  const dotsRef = useRef([]);
+  // const slidesRef = useRef([]);
+  // const dotsRef = useRef([]);
 
-  useEffect(() => {
-    const slides = slidesRef.current;
-    const dots = dotsRef.current;
+  // useEffect(() => {
+  //   const slides = slidesRef.current;
+  //   const dots = dotsRef.current;
 
-    if (slideIndex > slides.length) {
-      setSlideIndex(1);
-    }
-    if (slideIndex < 1) {
-      setSlideIndex(slides.length);
-    }
+  //   if (slideIndex > slides.length) {
+  //     setSlideIndex(1);
+  //   }
+  //   if (slideIndex < 1) {
+  //     setSlideIndex(slides.length);
+  //   }
 
-    slides.forEach((slide, i) => {
-      slide.style.display = i === slideIndex - 1 ? "block" : "none";
-    });
+  //   slides.forEach((slide, i) => {
+  //     slide.style.display = i === slideIndex - 1 ? "block" : "none";
+  //   });
 
-    dots.forEach((dot, i) => {
-      dot.className =
-        i === slideIndex - 1
-          ? dot.className + " active"
-          : dot.className.replace(" active", "");
-    });
-  }, [slideIndex]);
+  //   dots.forEach((dot, i) => {
+  //     dot.className =
+  //       i === slideIndex - 1
+  //         ? dot.className + " active"
+  //         : dot.className.replace(" active", "");
+  //   });
+  // }, [slideIndex]);
 
   return (
     <div className="add-product">
@@ -180,21 +223,22 @@ const UpdateProduct = () => {
             onChange={handleFileChange}
             multiple
           />
-          <div>
+          <div style={{ width: "60%" }}>
             <input
+              style={{ marginRight: "10px" }}
               type="checkbox"
               name="isAvailable"
-              value={formData.isAvailable}
-              onChange={handleInputChange}
+              checked={formData.isAvailable}
+              onChange={handleCheckbox}
             />
+            Product is in stock ?
           </div>
-          <div style={{width:'60%'}}><input type="checkbox" name="isAvailable" value={formData.isAvailable} onChange={handleInputChange}/> Product is in stock ?</div>
           <button className="add-product-button" type="submit">
             Update
           </button>
         </form>
         <div className="add-product-img-div">
-          <div
+          {/* <div
             className="mySlides fade"
             ref={(el) => (slidesRef.current[0] = el)}
           >
@@ -320,8 +364,8 @@ const UpdateProduct = () => {
                 ref={(el) => (dotsRef.current[4] = el)}
               ></span>
             ) : null}
-          </div>
-        </div>
+          </div>*/}
+        </div> 
       </div>
     </div>
   );

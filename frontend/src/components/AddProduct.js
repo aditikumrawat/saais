@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Header from "./Header";
+import Multiselect from 'multiselect-react-dropdown';
 import axios from "axios";
 import blankimg from "../images/blankimg.png";
 import "../css/AddProduct.css";
@@ -10,10 +11,13 @@ const AddProduct = () => {
     description: "",
     price: "",
     tagId: [],
+    selectedValues : [],
     user_id: "",
     isAvailable: true,
     image: [],
   });
+
+  const [options,setOptions] = useState([]);
 
   let image_ids = [];
   const images = new FormData();
@@ -47,6 +51,36 @@ const AddProduct = () => {
       formData.isAvailable ? setFormData({...formData, isAvailable: false}) : setFormData({...formData, isAvailable: true});
   }
 
+  const handleSearch = (selectedList, selectedItem) => {
+    if(selectedList !== ""){
+    try{
+      axios.get(`http://localhost:8000/tags/search_tag/${selectedList}`)
+      .then((response) => {
+          setOptions(response.data);
+      })
+    }
+    catch(error){
+      console.log("Error is :",error);
+    }
+  }
+  };
+
+  const handleSelect = (selectedList, selectedItem) => {
+    const selectedIds = selectedList.map((item) => item._id);
+    setFormData({
+      ...formData,
+      tagId: selectedIds,
+    });
+  }
+
+  const handleRemoveSelect = (selectedList, removedItem) =>{
+    const selectedIds = selectedList.map((item) => item._id);
+    setFormData({
+      ...formData,
+      tagId: selectedIds,
+    });
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -76,8 +110,8 @@ const AddProduct = () => {
         description: formData.description,
         price: formData.price,
         is_available: formData.isAvailable,
-        tags_id: ["65355e77e23bad46cf16ac10"],
-        user_id: "65327386a23a8ce9dbade6ab",
+        tags_id: formData.tagId,
+        user_id: "65361f19c189df24b882d041",
         images_id: image_ids,
         created_at: "2023-10-22T17:23:56.658Z",
         updated_at: "2023-10-22T17:23:56.658Z",
@@ -172,14 +206,12 @@ const AddProduct = () => {
             value={formData.price}
             onChange={handleInputChange}
           />
-          <input
-            className="add-product-input"
-            name="tag"
-            type="text"
-            placeholder="Enter product tag"
-            value={formData.tag}
-            onChange={handleInputChange}
+          <div className="add-product-select-div">
+              <Multiselect className="tags-select" placeholder={formData.tagId.length === 0 ? "Search the tags here":null} options={options} displayValue="tag_name" onSearch={handleSearch}
+              onSelect={handleSelect} onRemove={handleRemoveSelect}
+              onKeyPressFn={(e) => { e.key === 'Enter' && e.preventDefault(); }}
           />
+          </div>
           <input
             className="add-product-input"
             ref={fileInput}

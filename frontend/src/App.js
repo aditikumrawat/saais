@@ -10,6 +10,8 @@ import SignUp from "./components/SignUp";
 import Dashboard from "./components/Dashboard";
 import AddProduct from './components/AddProduct';
 import UpdateProduct from "./components/UpdateProduct";
+import AddBundle from "./components/AddBundle"
+import UpdateBundle from "./components/UpdateBundle"
 
 function App() {
 
@@ -105,6 +107,8 @@ const particlesLoaded = useCallback(async container => {
         <Route path="/dashboard" element={<Dashboard />}></Route>
         <Route path="/addProduct" element={<AddProduct />}></Route>
         <Route path="/updateProduct" element={<UpdateProduct />}></Route>
+        <Route path="/addBundle" element={<AddBundle />}></Route>
+        <Route path="/updateBundle" element={<UpdateBundle />}></Route>
       </Routes>
     </BrowserRouter>
   );
