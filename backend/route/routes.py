@@ -607,29 +607,29 @@ def searching_rating_by_product_id(user_id: str):
     return result
 
 
-# @router.get("/get_image/{image_id}")
-# async def get_image(image_id: str):
-#     try:
-#         file = fs.get(ObjectId(image_id))
-
-#         image_data = file.read()
-        
-#         return StreamingResponse(io.BytesIO(image_data), media_type="image/jpeg")
-
-#     except FileNotFoundError:
-#         raise HTTPException(status_code=404, detail="Image not found")
-
-@router.get("/get_images/")
-async def get_images(image_ids: list[str]):
+@router.get("/get_image/{image_id}")
+async def get_image(image_id: str):
     try:
-        image_responses = []
-        
-        for image_id in image_ids:
-            file = fs.get(ObjectId(image_id))
-            image_data = file.read()
-            image_responses.append(StreamingResponse(io.BytesIO(image_data), media_type="image/jpeg"))
+        file = fs.get(ObjectId(image_id))
 
-        return image_responses
+        image_data = file.read()
+        
+        return StreamingResponse(io.BytesIO(image_data), media_type="image/jpeg")
 
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Image not found")
+
+# @router.get("/get_images/")
+# async def get_images(image_ids: list[str]):
+#     try:
+#         image_responses = []
+        
+#         for image_id in image_ids:
+#             file = fs.get(ObjectId(image_id))
+#             image_data = file.read()
+#             image_responses.append(StreamingResponse(io.BytesIO(image_data), media_type="image/jpeg"))
+
+#         return image_responses
+
+#     except FileNotFoundError:
+#         raise HTTPException(status_code=404, detail="Image not found")
