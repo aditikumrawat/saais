@@ -1,14 +1,14 @@
 from fastapi import APIRouter, HTTPException, UploadFile
 from starlette.responses import FileResponse
 from typing import List
-from models.models import User, Product, Bundle, Tag, Review, Rating
-from config.database import users, products, fs, bundles, tags, reviews, ratings
-from schema.schemas import list_User, list_Product, list_Bundle, list_Tag, list_Rating, list_Review
+from models.models import User, Bundle, Tag, Review, Rating
+from config.database import users, bundles, tags, reviews, ratings
+from schema.schemas import list_User, list_Bundle, list_Tag, list_Rating, list_Review
 from models.models import hash_password
 from bson import ObjectId
 from datetime import datetime
-from starlette.responses import StreamingResponse
-import io
+from itertools import permutations
+import random
 
 router = APIRouter()
 
@@ -53,7 +53,6 @@ def get_users():
     all_users = list_User(users.find())
     return all_users
 
-
 @router.get('/users/{user_id}')
 def get_user_with_username(user_id: str):
     all_users = list_User(users.find())
@@ -77,6 +76,21 @@ def delete_user(user_id: str):
 
     raise HTTPException(
         status_code=404, detail="User not found.")
+    
+@router.get('/generate_username')
+def generate_username(first_name : str, last_name: str):
+    random_number = random.randrange(1, 99)
+    ls = [first_name, last_name, '_', random_number]
+    
+    all_permutations = list(permutations(ls))
+    
+    for permu in all_permutations:
+        s = ""
+        for ch in permu:
+            s += str(ch)
+        exists = users.find_one({"username" : s})
+        if not exists:
+            return s
 
 
 @router.post('/bundle/add_bundle')
