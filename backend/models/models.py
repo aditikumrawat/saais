@@ -3,7 +3,6 @@ from datetime import datetime
 from fastapi import UploadFile
 from passlib.context import CryptContext
 from typing import Optional, List
-from uuid import uuid4
 
 
 class User(BaseModel):
@@ -26,18 +25,6 @@ class TokenData(BaseModel):
 class Tag(BaseModel):
     tag_name: str = Field(default=None)
 
-
-class Product(BaseModel):
-    product_title: Optional[str] = Field(default=None)
-    description: Optional[str] = Field(default=None, max_length=300)
-    price: Optional[float] = Field(default=None)
-    is_available: bool = Field(default=True)
-    tags_id: List[str] = Field(default=None)
-    user_id: Optional[str] = Field(default=None)
-    images_id: List[str] = Field(default=None)
-
-    created_at: datetime
-    updated_at: datetime
 
 
 class Bundle(BaseModel):

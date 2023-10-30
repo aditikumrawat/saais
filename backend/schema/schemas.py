@@ -12,27 +12,6 @@ def list_User(users) -> list:
     registered_users = [UserSerializer(user) for user in users]
     return registered_users
 
-
-def ProductSerializer(product):
-    return {
-        "product_id": str(product["_id"]),
-        "product_title": product["product_title"],
-        "description": product["description"],
-        "price": product["price"],
-        "is_available": product["is_available"],
-        "tags_id": product["tags_id"],
-        "user_id": product["user_id"],
-        "images_id": product["images_id"],
-        "created_at": product["created_at"],
-        "updated_at" : product["updated_at"]
-    }
-
-
-def list_Product(products) -> list:
-    registered_products = [ProductSerializer(product) for product in products]
-    return registered_products
-
-
 def BundleSerializer(bundle):
     return {
         "bundle_id": str(bundle["_id"]),
