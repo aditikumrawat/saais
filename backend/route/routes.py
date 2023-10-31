@@ -54,17 +54,29 @@ def get_users():
     return all_users
 
 @router.get('/users/{user_id}')
-def get_user_with_username(user_id: str):
+def get_user_with_userid(user_id: str):
     all_users = list_User(users.find())
     for user in all_users:
         if user["user_id"] == user_id:
             return {
-                user["user_id"]: user
+                user
             }
     return {
         "error": "User does not exits!"
     }
 
+
+@router.get('/users/{username}')
+def get_user_with_username(username: str):
+    all_users = list_User(users.find())
+    for user in all_users:
+        if user["username"] == username:
+            return {
+                user
+            }
+    return {
+        "error": "User does not exits!"
+    }
 
 @router.delete('/users/delete_user/{user_id}')
 def delete_user(user_id: str):
@@ -79,18 +91,32 @@ def delete_user(user_id: str):
     
 @router.get('/generate_username')
 def generate_username(first_name : str, last_name: str):
-    random_number = random.randrange(1, 99)
-    ls = [first_name, last_name, '_', random_number]
+    first_name = first_name.strip()
+    last_name = last_name.strip()
+    counter = 100
+    while counter > 0:
+        random_number = random.randrange(1, 99)
+        ls = [first_name,'_',str(random_number)]
+        
+        all_permutations = list(permutations(ls))
+        for permu in all_permutations:
+            s = "".join(permu)
+            exists = users.find_one({"username" : s})
+            if not exists:
+                    return s
+        counter-=1   
     
-    all_permutations = list(permutations(ls))
-    
-    for permu in all_permutations:
-        s = ""
-        for ch in permu:
-            s += str(ch)
-        exists = users.find_one({"username" : s})
-        if not exists:
-            return s
+    while True:
+        random_number = random.randrange(1, 99)
+        ls = [first_name, last_name, '_', random_number]
+        
+        all_permutations = list(permutations(ls))
+        
+        for permu in all_permutations:
+            s = "".join(permu)
+            exists = users.find_one({"username" : s})
+            if not exists:
+                    return s
 
 
 @router.post('/bundle/add_bundle')
