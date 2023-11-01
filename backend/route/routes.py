@@ -1,5 +1,4 @@
-from fastapi import APIRouter, HTTPException, UploadFile
-from starlette.responses import FileResponse
+from fastapi import APIRouter, HTTPException, Request
 from typing import List
 from models.models import User, Bundle, Tag, Review, Rating
 from config.database import users, bundles, tags, reviews, ratings
