@@ -5,7 +5,6 @@ def UserSerializer(user) -> dict:
         "email": user["email"],
         "username": user["username"],
         "password": user["password"],
-        "is_active" : user["is_active"],
     }
 
 

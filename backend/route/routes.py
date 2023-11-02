@@ -22,9 +22,10 @@ def home():
 @router.post("/register_user")
 def register_user(user: User):
     try:
-        existing_user = users.find_one({"email": user.email})
+        existing_user_email = users.find_one({"email": user.email})
+        existing_username = users.find_one({"username": user.username})
 
-        if existing_user:
+        if existing_user_email or existing_username:
             return {"message": "Email already exits."}
 
         hashed_password = hash_password(user.password)
@@ -34,6 +35,7 @@ def register_user(user: User):
             "username": user.username,
             "email": user.email,
             "password": hashed_password,
+            "is_active" : user.is_active
         }
 
         result = users.insert_one(user_info)
