@@ -8,14 +8,16 @@ from typing import Optional, List
 class User(BaseModel):
     full_name: str = Field(default=None)
     email: EmailStr = Field(default=None)
-    username: str
-    password: str
+    username: str = Field(default=None)
+    password: str = Field(default=None)
+    
+    is_active : bool = Field(default=False)
 
 
 class Token(BaseModel):
     access_token: str
     token_type: str
-    username: str
+    fullname: str
 
 
 class TokenData(BaseModel):

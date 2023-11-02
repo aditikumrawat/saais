@@ -19,11 +19,16 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 50
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+smtp_server = "your-smtp-server.com"
+smtp_port = 587  # Use the appropriate SMTP port
+sender_email = "noreply@saais.in"
+password = "your-email-password"
+
 app = FastAPI()
 
 app.include_router(router)
 
-origins = ["https://localhost:3000","*"]
+origins = ["https://localhost:3000", "*"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -31,6 +36,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
+
+
+def send_mail():
+    pass
 
 
 def verify_password(plain_password, hashed_password):
@@ -71,9 +80,8 @@ def create_access_token(data: dict, expires_delta: timedelta or None = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-
-@app.post("/token", response_model=Token)
-def login_for_access_token(form_data: OAuth2PasswordRequestForm= Depends()):
+@app.post('/token')
+def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user = authenticate_user(form_data.username, form_data.password)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
@@ -81,12 +89,12 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm= Depends()):
                             headers={"WWW-Authenticate": "Bearer"})
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires)
+        data={"sub": user["user_id"]}, expires_delta=access_token_expires)
     return {
         "access_token": access_token,
-        "username":form_data.username,
         "token_type": "bearer"
-        }
+    }
+
 
 def is_valid(token: str):
     try:
@@ -95,9 +103,41 @@ def is_valid(token: str):
     except JWTError:
         return False
 
-@app.post("/logout")
-async def logout(token: str = Depends(oauth2_scheme)):
-    if is_valid(token):
-        return {"detail": "Logged out successfully"}
-    else:
-        raise HTTPException(status_code=400, detail="Invalid token")
+
+@app.post('/google_signin')
+def google_signup(user: User):
+    try:
+        existing_user = users.find_one({"email": user.email})
+        access_token_expires = timedelta(
+                minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        print(existing_user)
+        if existing_user != None and existing_user['is_active'] == True:
+            id = str(existing_user["_id"])
+            access_token = create_access_token(
+                data={"sub": id}, expires_delta=access_token_expires)
+            
+            return {
+                "access_token": access_token,
+                "token_type": "bearer"
+            }
+        
+        user_info = {
+                "full_name": user.full_name,
+                "email": user.email,
+                "username" : None,
+                "password" : None,
+                "is_active" : True
+            }
+        result = users.insert_one(user_info)
+        id = str(result.inserted_id)
+        print(id)
+            
+        access_token = create_access_token(
+                    data={"sub": id}, expires_delta=access_token_expires)
+        return {
+                    "access_token": access_token,
+                    "token_type": "bearer"
+                }
+
+    except Exception as e:
+      raise HTTPException(status_code=500, detail="Error registering user")
