@@ -1,3 +1,9 @@
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import secrets
+import config
+
 def UserSerializer(user) -> dict:
     return {
         "user_id": str(user['_id']),
@@ -5,6 +11,7 @@ def UserSerializer(user) -> dict:
         "email": user["email"],
         "username": user["username"],
         "password": user["password"],
+        "is_active" : user['is_active']
     }
 
 
@@ -69,3 +76,34 @@ def TagSerializer(tag):
 def list_Tag(tags) -> list:
     list_tags = [TagSerializer(tag) for tag in tags]
     return list_tags
+
+
+smtp_server = "smtp.gmail.com" 
+smtp_port = 587  
+sender_email = "aditikumrawat24@gmail.com"
+sender_password = "igdh sgpp gzwl hqiz"
+
+def send_email(recipient_email):
+    try:
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls() 
+        server.login(sender_email, sender_password)
+        message = MIMEMultipart()
+        message["From"] = sender_email
+        message["To"] = recipient_email
+        message["Subject"] = "Activate your account"
+        
+        
+        activation_token = secrets.token_urlsafe(32)
+        activation_link = f"http://localhost:3000/activate?token={activation_token}"
+        body = f"Click the following link to activate your account: {activation_link}"
+        # body = "Hello"
+        message.attach(MIMEText(body, "plain"))
+
+        server.sendmail(sender_email, recipient_email, message.as_string())
+        server.quit()
+
+        print("Email sent successfully.")
+    except Exception as e:
+        print(f"Error: {str(e)}")
+

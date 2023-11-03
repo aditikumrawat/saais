@@ -10,7 +10,8 @@ from decouple import config
 from route.routes import router
 from schema.schemas import list_User
 from config.database import users
-
+import secrets
+import time
 
 SECRET_KEY = config("secret")
 ALGORITHM = config("algorithm")
@@ -22,7 +23,9 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 smtp_server = "your-smtp-server.com"
 smtp_port = 587  # Use the appropriate SMTP port
 sender_email = "noreply@saais.in"
-password = "your-email-password"
+password = "SaVePX#@&U7"
+
+activation_token = secrets.token_urlsafe(32)
 
 app = FastAPI()
 
@@ -53,7 +56,7 @@ def get_password_hash(password):
 def get_user(username: str):
     db = list_User(users.find())
     for user in db:
-        if user["username"] == username:
+        if user["username"] == username and user['is_active'] != False:
             user_data = user
             return User(**user_data)
     return None
@@ -80,6 +83,7 @@ def create_access_token(data: dict, expires_delta: timedelta or None = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
+
 @app.post('/token')
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user = authenticate_user(form_data.username, form_data.password)
@@ -88,7 +92,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="Invalid credentials",
                             headers={"WWW-Authenticate": "Bearer"})
-    existing_user = users.find_one({"email" : user.email})
+    existing_user = users.find_one({"email": user.email})
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": str(existing_user['_id'])}, expires_delta=access_token_expires)
@@ -96,6 +100,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
         "access_token": access_token,
         "token_type": "bearer"
     }
+
 
 def is_valid(token: str):
     try:
@@ -106,38 +111,42 @@ def is_valid(token: str):
 
 
 @app.post('/google_signin')
-def google_signup(user: User):
+def google_signup(user: User, expiry_time: int):
     try:
+        curr_time = int(time.time())
+        if curr_time > expiry_time:
+            return {"error": "Token is expired."}
+
         existing_user = users.find_one({"email": user.email})
         access_token_expires = timedelta(
-                minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-        print(existing_user)
+            minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+
         if existing_user != None and existing_user['is_active'] == True:
             id = str(existing_user["_id"])
             access_token = create_access_token(
                 data={"sub": id}, expires_delta=access_token_expires)
-            
+
             return {
                 "access_token": access_token,
                 "token_type": "bearer"
             }
-        
+
         user_info = {
-                "full_name": user.full_name,
-                "email": user.email,
-                "username" : None,
-                "password" : None,
-                "is_active" : True
-            }
+            "full_name": user.full_name,
+            "email": user.email,
+            "username": None,
+            "password": None,
+            "is_active": True
+        }
         result = users.insert_one(user_info)
         id = str(result.inserted_id)
-            
+
         access_token = create_access_token(
-                    data={"sub": id}, expires_delta=access_token_expires)
+            data={"sub": id}, expires_delta=access_token_expires)
         return {
-                    "access_token": access_token,
-                    "token_type": "bearer"
-                }
+            "access_token": access_token,
+            "token_type": "bearer"
+        }
 
     except Exception as e:
-      raise HTTPException(status_code=500, detail="Error registering user")
+        raise HTTPException(status_code=500, detail="Error registering user")

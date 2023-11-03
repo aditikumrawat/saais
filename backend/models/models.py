@@ -10,7 +10,6 @@ class User(BaseModel):
     email: EmailStr = Field(default=None)
     username: str = Field(default=None)
     password: str = Field(default=None)
-    
     is_active : bool = Field(default=False)
 
 

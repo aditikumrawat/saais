@@ -8,6 +8,7 @@ from bson import ObjectId
 from datetime import datetime
 from itertools import permutations
 import random
+from schema.schemas import send_email
 
 router = APIRouter()
 
@@ -35,11 +36,13 @@ def register_user(user: User):
             "username": user.username,
             "email": user.email,
             "password": hashed_password,
-            "is_active" : user.is_active
+            "is_active" : False
         }
 
         result = users.insert_one(user_info)
         id = str(result.inserted_id)
+        
+        send_email(user.email)
 
         return {"message": "User registered successfully",
                 "user_id": id,
@@ -91,7 +94,10 @@ def delete_user(user_id: str):
         status_code=404, detail="User not found.")
     
 @router.get('/generate_username')
-def generate_username(first_name : str, last_name: str):
+def generate_username(full_name: str):
+    first_name = full_name.split()[0]
+    last_name = full_name.split()[1]
+    
     first_name = first_name.strip()
     last_name = last_name.strip()
     counter = 100
