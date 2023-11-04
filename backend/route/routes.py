@@ -95,11 +95,7 @@ def delete_user(user_id: str):
 @router.get('/generate_username/{full_name}')
 def generate_username(full_name: str):
     arr = full_name.split()
-    first_name = arr[0]
-    if len(arr) > 1:
-        last_name = arr[1]
-        last_name = last_name.strip()
-    
+    first_name = arr[0]    
     first_name = first_name.strip()
    
     counter = 100
@@ -115,6 +111,9 @@ def generate_username(full_name: str):
                     return s
         counter-=1   
     
+    if len(arr) > 1:
+        last_name = arr[1]
+        last_name = last_name.strip()
     while True:
         random_number = random.randrange(1, 99)
         ls = [first_name, last_name, '_', random_number]
