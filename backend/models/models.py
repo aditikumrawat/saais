@@ -26,7 +26,8 @@ class Tag(BaseModel):
     tag_name: str = Field(default=None)
     
 class Login(BaseModel):
-    
+    username : str
+    password : str
 
 
 # class Bundle(BaseModel):
