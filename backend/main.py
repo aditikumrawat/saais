@@ -76,9 +76,9 @@ def create_access_token(data: dict, expires_delta: timedelta or None = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-@app.get('/sigin/')
-def login(login: Login):
-    pass
+# @app.get('/sigin/')
+# def login(login: Login):
+#     pass
     
 
 @app.post('/token')
