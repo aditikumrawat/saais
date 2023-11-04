@@ -24,6 +24,9 @@ class TokenData(BaseModel):
 
 class Tag(BaseModel):
     tag_name: str = Field(default=None)
+    
+class Login(BaseModel):
+    
 
 
 # class Bundle(BaseModel):

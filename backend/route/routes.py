@@ -74,8 +74,8 @@ def get_user_with_username(username: str):
     all_users = list_User(users.find())
     for user in all_users:
         if user["username"] == username:
-            return True
-    return False
+            return {"message" : True}
+    return {"message" :  False}
 
 @router.delete('/users/delete_user/{user_id}')
 def delete_user(user_id: str):
