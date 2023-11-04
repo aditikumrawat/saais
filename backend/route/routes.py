@@ -74,12 +74,8 @@ def get_user_with_username(username: str):
     all_users = list_User(users.find())
     for user in all_users:
         if user["username"] == username:
-            return {
-                user
-            }
-    return {
-        "error": "User does not exits!"
-    }
+            return True
+    return False
 
 @router.delete('/users/delete_user/{user_id}')
 def delete_user(user_id: str):
@@ -429,18 +425,18 @@ def generate_username(full_name: str):
 #     raise Exception(status_code=404, detail="Rating details not found.")
 
 
-@router.delete('/ratings/delete_rating/{rating_id}')
-def delete_rating_by_rating_id(rating_id: str):
+# @router.delete('/ratings/delete_rating/{rating_id}')
+# def delete_rating_by_rating_id(rating_id: str):
 
-    exists = ratings.find_one({'_id': ObjectId(rating_id)})
+#     exists = ratings.find_one({'_id': ObjectId(rating_id)})
 
-    if exists:
-        ratings.delete_one({'_id': ObjectId(rating_id)})
-        return {"message": "Rating successfully deleted"}
+#     if exists:
+#         ratings.delete_one({'_id': ObjectId(rating_id)})
+#         return {"message": "Rating successfully deleted"}
 
-    raise HTTPException(
-        status_code=404, detail="Rating details not found"
-    )
+#     raise HTTPException(
+#         status_code=404, detail="Rating details not found"
+#     )
 
 
 
