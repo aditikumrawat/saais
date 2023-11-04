@@ -20,13 +20,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 50
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-smtp_server = "your-smtp-server.com"
-smtp_port = 587  # Use the appropriate SMTP port
-sender_email = "noreply@saais.in"
-password = "SaVePX#@&U7"
-
-activation_token = secrets.token_urlsafe(32)
-
 app = FastAPI()
 
 app.include_router(router)
@@ -40,9 +33,6 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-
-def send_mail():
-    pass
 
 
 def verify_password(plain_password, hashed_password):
