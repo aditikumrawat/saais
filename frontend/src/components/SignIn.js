@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import '../css/SignIn.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
 import SigninLottieAnimation from './SigninLottieAnimation';
 import SaaisHeader from './SaaisHeader';
 
@@ -23,7 +25,7 @@ const SignIn = () => {
       passwordInput.current.type = 'text';
     }else{
       setPasswordVisiblility(false);
-      passwordInput.current.type = 'password';
+      passwordInput.current.type = 'password';      
     }
   }
 
@@ -102,6 +104,12 @@ const SignIn = () => {
             </div>
           </div>
           <button type="submit" className="signin-button">Login</button>
+          <GoogleLogin onSuccess={credentialResponse => {
+              const credentialsDecoded = jwtDecode(credentialResponse.credential);
+              console.log(credentialsDecoded);
+            }}  onError={() => {
+                console.log('Login Failed');
+            }}/>
           <div className='signin-links-div'>
             <span >Don't have an account? <Link className='signin-links' to='/signup'>Register here</Link></span>
             <span><a className='signin-links' href='/'>Forget password?</a></span>

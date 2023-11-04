@@ -72,10 +72,21 @@
   font-size: 17px;
   color:white;
 }
+.signup-username-div{
+  width: 60%;
+  display: flex;
+}
 
 .signup-password-div{
   width: 60%;
   display: flex;
+}
+
+.signup-username-tick{
+  margin-right: -25px;
+  margin-left: -29px;
+  margin-top: 11px;
+  cursor: pointer;
 }
 
 .signup-eye-button{
@@ -88,7 +99,21 @@
 .signup-input-password{
   width: 100%;
 }
-
+.signup-input-username{
+  width: 100%;
+}
+.suggest-password-div{
+    box-sizing: border-box;
+    width: 60%;
+    background-color: white;
+    color: black;
+    position: absolute;
+    top: 67%;
+    text-align: justify;
+}
+.suggest-password-button{
+  background-color: #5153f1;
+}
 .signup-button{
   width:60%;
   padding: 12px 0px;
