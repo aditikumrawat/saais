@@ -56,7 +56,7 @@ def get_users():
     all_users = list_User(users.find())
     return all_users
 
-@router.get('/users/{user_id}')
+@router.get('/users/ids/{user_id}')
 def get_user_with_userid(user_id: str):
     all_users = list_User(users.find())
     for user in all_users:
