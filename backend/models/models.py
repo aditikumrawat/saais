@@ -4,12 +4,14 @@ from fastapi import UploadFile
 from passlib.context import CryptContext
 from typing import Optional, List
 
+
 class User(BaseModel):
     full_name: str = Field(default=None)
     email: EmailStr = Field(default=None)
     username: str = Field(default=None)
     password: str = Field(default=None)
-    is_active : bool = Field(default=False)
+
+    is_active: bool = Field(default=False)
 
 
 class Token(BaseModel):
@@ -24,10 +26,19 @@ class TokenData(BaseModel):
 
 class Tag(BaseModel):
     tag_name: str = Field(default=None)
-    
+
+
 class Login(BaseModel):
-    username : str
-    password : str
+    username: str
+    password: str
+
+
+class GoogleSignUp(BaseModel):
+    full_name: str = Field(default=None)
+    email: EmailStr = Field(default=None)
+    
+    is_active: bool = Field(default=False)
+    id_token: str = Field(default=None)
 
 
 # class Bundle(BaseModel):
@@ -51,12 +62,12 @@ class Login(BaseModel):
 #     rating : int = Field(default=None)
 #     product_id : str = Field(default=None)
 #     reviewer_id : str = Field(default=None)
-    
+
 # class WatchList(BaseModel):
 #     product_id : str = Field(default=None)
 #     is_bundle : bool = Field(default=False)
 #     notification_id : str = Field(default=None)
-    
+
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
