@@ -5,6 +5,7 @@ import Bundle from "./components/Bundle";
 import { useCallback } from "react";
 import Particles from "react-particles";
 import { loadSlim } from "tsparticles-slim";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import Dashboard from "./components/Dashboard";
@@ -25,6 +26,7 @@ const particlesLoaded = useCallback(async container => {
 }, []);
   return (
     <BrowserRouter>
+    <GoogleOAuthProvider clientId="805286160007-u9l2316h9qod36qhd4ue7hdp9phl9pdj.apps.googleusercontent.com">
     <Particles
               id="tsparticles"
               init={particlesInit}
@@ -110,6 +112,7 @@ const particlesLoaded = useCallback(async container => {
         <Route path="/addBundle" element={<AddBundle />}></Route>
         <Route path="/updateBundle" element={<UpdateBundle />}></Route>
       </Routes>
+      </GoogleOAuthProvider>
     </BrowserRouter>
   );
 }
