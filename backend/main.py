@@ -12,9 +12,11 @@ from models.models import hash_password
 from bson import ObjectId
 from itertools import permutations
 from google.oauth2 import id_token
+# from google.auth.transport import requests
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from passlib.context import CryptContext
+import requests
 import random
 import smtplib
 from decouple import config 
@@ -63,7 +65,7 @@ def get_password_hash(password):
 def get_user(username: str):
     db = list_User(users.find())
     for user in db:
-        if user["username"] == username:  # and user['is_active'] != False
+        if user["username"] == username:
             user_data = user
             return User(**user_data)
     return None
@@ -235,7 +237,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     }
 
 
-@app.get('/is_valid/')
+@app.get('/is_valid')
 def is_valid(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -247,33 +249,37 @@ def is_valid(token: str):
 @app.post('/auth/google/')
 def google_signup(user: GoogleSignUp):
     try:
-        user_info = id_token.verify_oauth2_token(user.id_token,
-                    issuer="accounts.google.com", 
-                    audience=GOOGLE_CLIENT_ID)
+        user_info = id_token.verify_oauth2_token(
+            user.id_token, None, audience=GOOGLE_CLIENT_ID
+        )
+
+        # Manually check the issuer
+        if user_info.get("iss") != "accounts.google.com":
+            raise HTTPException(status_code=401, detail="Invalid issuer")
+        
+        # user_info = id_token.verify_oauth2_token(user.id_token,
+        #             request=None,
+        #             audience=GOOGLE_CLIENT_ID, issuer="accounts.google.com")
+    
     except Exception as e:
-        raise HTTPException(status_code=401, detail="Invalid ID token")
+        print(e)
+        # raise HTTPException(status_code=401, detail="Invalid ID token")
 
-    info = {
-        "full_name": user.full_name,
-        "email": user.email,
-        "is_active": True
-    }
+    # info = {
+    #     "full_name": user.full_name,
+    #     "email": user.email,
+    #     "is_active": True,
+    # }
 
-    result = users.insert_one(info)
+    # result = users.insert_one(info)
 
-    session_token = jwt.encode(
-        {"user_info": user_info}, "SECRET_KEY", algorithm=ALGORITHM)
+    # session_token = jwt.encode(
+    #     {"user_info": user_info}, SECRET_KEY, algorithm=ALGORITHM)
 
-    return {"session_token": session_token}
+    # return {"session_token": session_token}
 
 
-# @app.get("/users/me/{session_token}")
-# def get_current_user(session_token: str = Depends(oauth2_scheme)):
-#     user_info = jwt.decode(session_token, SECRET_KEY, algorithms=ALGORITHM)
-
-#     return user_info
-
-@app.get('/activate_user')
+@app.post('/activate_user/{token}')
 def activate_user(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)

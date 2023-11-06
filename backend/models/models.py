@@ -38,7 +38,7 @@ class GoogleSignUp(BaseModel):
     email: EmailStr = Field(default=None)
     
     is_active: bool = Field(default=False)
-    id_token: str = Field(default=None)
+    id_token: str 
 
 
 # class Bundle(BaseModel):
