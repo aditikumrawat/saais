@@ -92,7 +92,7 @@ const handleSubmit  = async() => {
         });
     
         console.log('Response:', response.data);
-        navigate('/');
+        navigate('/beforeActivation');
       } catch (error) {
         console.error('Error:', error);
       }

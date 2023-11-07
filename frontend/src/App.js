@@ -13,6 +13,9 @@ import AddProduct from './components/AddProduct';
 import UpdateProduct from "./components/UpdateProduct";
 import AddBundle from "./components/AddBundle"
 import UpdateBundle from "./components/UpdateBundle"
+import BeforeAcitvation from "./components/BeforeAcitvation";
+import AfterAcivation from "./components/AfterAcivation";
+import GoogleLoginButton from "./components/GoogleLoginButton";
 
 function App() {
 
@@ -111,6 +114,9 @@ const particlesLoaded = useCallback(async container => {
         <Route path="/updateProduct" element={<UpdateProduct />}></Route>
         <Route path="/addBundle" element={<AddBundle />}></Route>
         <Route path="/updateBundle" element={<UpdateBundle />}></Route>
+        <Route path="/beforeActivation" element={<BeforeAcitvation />}/>
+        <Route path="/activate" element={<AfterAcivation/>}/>
+        <Route path="/googleSigninButton" element={<GoogleLoginButton/>}/>
       </Routes>
       </GoogleOAuthProvider>
     </BrowserRouter>

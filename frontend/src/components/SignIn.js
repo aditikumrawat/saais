@@ -6,6 +6,7 @@ import '../css/SignIn.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { GoogleLogin } from '@react-oauth/google';
+import {useGoogleLogin} from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
 import SigninLottieAnimation from './SigninLottieAnimation';
 import SaaisHeader from './SaaisHeader';
@@ -13,6 +14,8 @@ import SaaisHeader from './SaaisHeader';
 const SignIn = () => {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [googleUser, setGoogleUser] = useState([]);
+  const [profile,setProfile] = useState([]);
 
   const[passwordVisiblility,setPasswordVisiblility] = useState(false);
   const passwordInput = useRef();
@@ -38,6 +41,58 @@ const SignIn = () => {
       setPassword(value);
     }
   }
+
+
+  const googleSignin = async(credentialResponse) =>{
+    const credentialsDecoded = jwtDecode(credentialResponse.credential);
+    const googleSigninData = {
+      "full_name": credentialsDecoded.name,
+      "email": credentialsDecoded.email,
+      "is_active": false,
+      "id_token": credentialResponse.credential,
+
+    }
+    try{
+      const response = await axios.post('http://localhost:8000/auth/google',googleSigninData,{
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+      console.log("response is ",response.data);
+    }
+    catch (error) {
+      console.error('Error:', error);
+    }
+    console.log("credentials ",credentialResponse.credential);
+    console.log(googleSigninData);
+  }
+
+  // const handleGoogleSignin = useGoogleLogin({
+  //   onSuccess: (codeResponse) => setGoogleUser(codeResponse),
+  //   onError: (error) => console.log('Login Failed:', error)
+  // });
+
+  // useEffect(
+  //       () => {
+  //           if (googleUser) {
+  //               axios
+  //                   .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${googleUser.access_token}`, {
+  //                       headers: {
+  //                           Authorization: `Bearer ${googleUser.access_token}`,
+  //                           Accept: 'application/json'
+  //                       }
+  //                   })
+  //                   .then((res) => {
+  //                       setProfile(res.data);
+  //                       console.log("token id",res);
+  //                   })
+  //                   .catch((err) => console.log(err));
+  //                   console.log("google user is ", googleUser);
+  //                   console.log("profile is ",profile);
+  //           }
+  //       },
+  //       [ googleUser ]
+  //   );
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -104,12 +159,10 @@ const SignIn = () => {
             </div>
           </div>
           <button type="submit" className="signin-button">Login</button>
-          <GoogleLogin onSuccess={credentialResponse => {
-              const credentialsDecoded = jwtDecode(credentialResponse.credential);
-              console.log(credentialsDecoded);
-            }}  onError={() => {
+          <GoogleLogin isSignedIn={true} onSuccess={googleSignin}  onError={() => {
                 console.log('Login Failed');
             }}/>
+          {/* <button type='button' onClick={handleGoogleSignin}>Sign in with google</button> */}
           <div className='signin-links-div'>
             <span >Don't have an account? <Link className='signin-links' to='/signup'>Register here</Link></span>
             <span><a className='signin-links' href='/'>Forget password?</a></span>

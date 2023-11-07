@@ -11,8 +11,9 @@ from bson import ObjectId
 from models.models import hash_password
 from bson import ObjectId
 from itertools import permutations
+# from google.oauth2 import id_token
+from google.auth.transport import requests as gr
 from google.oauth2 import id_token
-# from google.auth.transport import requests
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from passlib.context import CryptContext
@@ -249,34 +250,36 @@ def is_valid(token: str):
 @app.post('/auth/google/')
 def google_signup(user: GoogleSignUp):
     try:
-        user_info = id_token.verify_oauth2_token(
-            user.id_token, None, audience=GOOGLE_CLIENT_ID
+        r = gr.Request()
+        user_info = id_token.verify_token(
+            user.id_token, r, audience=GOOGLE_CLIENT_ID
         )
 
+        print(user_info)
+
         # Manually check the issuer
-        if user_info.get("iss") != "accounts.google.com":
+        if user_info.get("iss") != "https://accounts.google.com":
             raise HTTPException(status_code=401, detail="Invalid issuer")
         
         # user_info = id_token.verify_oauth2_token(user.id_token,
         #             request=None,
         #             audience=GOOGLE_CLIENT_ID, issuer="accounts.google.com")
-    
+        info = {
+            "full_name": user.full_name,
+            "email": user.email,
+            "is_active": True,
+        }
+
+        result = users.insert_one(info)
+
+        session_token = jwt.encode(
+            {"user_info": user_info}, SECRET_KEY, algorithm=ALGORITHM)
+
+        return {"session_token": session_token}
     except Exception as e:
-        print(e)
+        print("Error",e)
         # raise HTTPException(status_code=401, detail="Invalid ID token")
-
-    # info = {
-    #     "full_name": user.full_name,
-    #     "email": user.email,
-    #     "is_active": True,
-    # }
-
-    # result = users.insert_one(info)
-
-    # session_token = jwt.encode(
-    #     {"user_info": user_info}, SECRET_KEY, algorithm=ALGORITHM)
-
-    # return {"session_token": session_token}
+    
 
 
 @app.post('/activate_user/{token}')
