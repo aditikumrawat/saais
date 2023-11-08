@@ -3,15 +3,14 @@ from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
-from models.models import User, GoogleSignUp
-from decouple import config     
+from models.models import User, GoogleSignUp, ForgotPassword
+from decouple import config
 from schema.schemas import list_User
 from config.database import users
 from bson import ObjectId
 from models.models import hash_password
 from bson import ObjectId
 from itertools import permutations
-# from google.oauth2 import id_token
 from google.auth.transport import requests as gr
 from google.oauth2 import id_token
 from email.mime.text import MIMEText
@@ -20,7 +19,7 @@ from passlib.context import CryptContext
 import requests
 import random
 import smtplib
-from decouple import config 
+from decouple import config
 
 
 SECRET_KEY = config("secret")
@@ -49,12 +48,14 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+
 @app.get('/')
 def home():
     return {
         "success": "Welcome to the home page!"
     }
-    
+
+
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
@@ -93,17 +94,19 @@ def create_access_token(data: dict, expires_delta: timedelta or None = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
+
 def send_email(recipient_email, user_id):
     try:
         server = smtplib.SMTP(smtp_server, smtp_port)
-        server.starttls() 
+        server.starttls()
         server.login(sender_email, sender_password)
         message = MIMEMultipart()
         message["From"] = sender_email
         message["To"] = recipient_email
         message["Subject"] = "Activate your account"
 
-        activation_token =jwt.encode({"user_id": user_id}, SECRET_KEY, algorithm=ALGORITHM)
+        activation_token = jwt.encode(
+            {"user_id": user_id}, SECRET_KEY, algorithm=ALGORITHM)
         activation_link = f"http://localhost:3000/activate?token={activation_token}"
         body = f"Click the following link to activate your account: {activation_link}"
         # body = "Hello"
@@ -114,7 +117,6 @@ def send_email(recipient_email, user_id):
         print("Email sent successfully.")
     except Exception as e:
         print(f"Error: {str(e)}")
-
 
 
 @app.post("/register_user")
@@ -133,13 +135,13 @@ def register_user(user: User):
             "username": user.username,
             "email": user.email,
             "password": hashed_password,
-            "is_active" : False
+            "is_active": False
         }
 
         result = users.insert_one(user_info)
         id = str(result.inserted_id)
-        
-        send_email(user.email,id)
+
+        send_email(user.email, id)
 
         return {"message": "User registered successfully",
                 "user_id": id,
@@ -153,6 +155,7 @@ def register_user(user: User):
 def get_users():
     all_users = list_User(users.find())
     return all_users
+
 
 @app.get('/users/ids/{user_id}')
 def get_user_with_userid(user_id: str):
@@ -175,6 +178,7 @@ def get_user_with_username(username: str):
             return True
     return False
 
+
 @app.delete('/users/delete_user/{user_id}')
 def delete_user(user_id: str):
     user_exists = users.find_one({'_id': ObjectId(user_id)})
@@ -185,40 +189,41 @@ def delete_user(user_id: str):
 
     raise HTTPException(
         status_code=404, detail="User not found.")
-    
+
+
 @app.get('/generate_username/{full_name}')
 def generate_username(full_name: str):
     arr = full_name.split()
-    first_name = arr[0]    
+    first_name = arr[0]
     first_name = first_name.strip()
-   
+
     counter = 100
     while counter > 0:
         random_number = random.randrange(1, 99)
-        ls = [first_name,'_',str(random_number)]
-        
+        ls = [first_name, '_', str(random_number)]
+
         all_permutations = list(permutations(ls))
         for permu in all_permutations:
             s = "".join(permu)
-            exists = users.find_one({"username" : s})
+            exists = users.find_one({"username": s})
             if not exists:
-                    return s
-        counter-=1   
-    
+                return s
+        counter -= 1
+
     if len(arr) > 1:
         last_name = arr[1]
         last_name = last_name.strip()
     while True:
         random_number = random.randrange(1, 99)
         ls = [first_name, last_name, '_', random_number]
-        
+
         all_permutations = list(permutations(ls))
-        
+
         for permu in all_permutations:
             s = "".join(permu)
-            exists = users.find_one({"username" : s})
+            exists = users.find_one({"username": s})
             if not exists:
-                    return s
+                return s
 
 
 @app.post('/token')
@@ -255,18 +260,18 @@ def google_signup(user: GoogleSignUp):
             user.id_token, r, audience=GOOGLE_CLIENT_ID
         )
 
-        print(user_info)
-
-        # Manually check the issuer
         if user_info.get("iss") != "https://accounts.google.com":
             raise HTTPException(status_code=401, detail="Invalid issuer")
-        
-        # user_info = id_token.verify_oauth2_token(user.id_token,
-        #             request=None,
-        #             audience=GOOGLE_CLIENT_ID, issuer="accounts.google.com")
+
+        if_exists = users.find_one({"email": user.email})
+        if if_exists:
+            return {"message": "Email id already exists."}
+
         info = {
             "full_name": user.full_name,
             "email": user.email,
+            "username": user.username,
+            "password": None,
             "is_active": True,
         }
 
@@ -277,23 +282,40 @@ def google_signup(user: GoogleSignUp):
 
         return {"session_token": session_token}
     except Exception as e:
-        print("Error",e)
-        # raise HTTPException(status_code=401, detail="Invalid ID token")
-    
+        raise HTTPException(status_code=401, detail="Invalid ID token")
 
 
 @app.post('/activate_user/{token}')
 def activate_user(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
-        if_exists = users.find_one({'_id' : ObjectId(payload["user_id"])})
-       
+        if_exists = users.find_one({'_id': ObjectId(payload["user_id"])})
+
         if_exists["is_active"] = True
-        users.update_one({'_id' : if_exists['_id']}, {"$set": if_exists})
-        return {"Message" : "Activate the user successfully."}
+        users.update_one({'_id': if_exists['_id']}, {"$set": if_exists})
+        return {"Message": "Activate the user successfully."}
     except JWTError:
-        return {"message" : "link is alredy expired."}
-    
+        return {"message": "link is alredy expired."}
 
 
+@app.post('/forgot_password')
+def forgot_password(info: ForgotPassword):
+    try:
+        if_exists = users.find_one({"email": info.email})
+        if if_exists == None:
+            return {"message": "Email does not exists."}
 
+        user_info = {
+            "full_name": if_exists["full_name"],
+            "email": info.email,
+            "username": if_exists["username"],
+            "password": hash_password(info.password),
+            "is_active": if_exists["is_active"]
+        }
+        result = users.update_one(
+            {"_id": if_exists['_id']}, {'$set': user_info})
+
+        return {"message": "Your password updated successfully."}
+
+    except Exception as e:
+        pass

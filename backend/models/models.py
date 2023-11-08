@@ -36,10 +36,14 @@ class Login(BaseModel):
 class GoogleSignUp(BaseModel):
     full_name: str = Field(default=None)
     email: EmailStr = Field(default=None)
+    username : str = Field(default=None)
     
     is_active: bool = Field(default=False)
     id_token: str 
 
+class ForgotPassword(BaseModel):
+    email : str = Field(default=None)
+    password : str = Field(default=None)
 
 # class Bundle(BaseModel):
 #     bundle_title: Optional[str] = Field(default=None)
