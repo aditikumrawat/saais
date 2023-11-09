@@ -44,6 +44,10 @@ class GoogleSignUp(BaseModel):
 class ForgotPassword(BaseModel):
     email : str = Field(default=None)
     password : str = Field(default=None)
+    
+class ChangePassword(BaseModel):
+    token : str = Field(default=None)
+    password : str = Field(default=None)
 
 # class Bundle(BaseModel):
 #     bundle_title: Optional[str] = Field(default=None)

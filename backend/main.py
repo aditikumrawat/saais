@@ -3,7 +3,7 @@ from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
-from models.models import User, GoogleSignUp, ForgotPassword
+from models.models import User, GoogleSignUp, ForgotPassword, ChangePassword
 from decouple import config
 from schema.schemas import list_User
 from config.database import users
@@ -104,12 +104,12 @@ def send_email(recipient_email, user_id):
         message["From"] = sender_email
         message["To"] = recipient_email
         message["Subject"] = "Activate your account"
-
-        activation_token = jwt.encode(
-            {"user_id": user_id}, SECRET_KEY, algorithm=ALGORITHM)
+        
+        data = {'user_id': user_id}
+        expiry_time = timedelta(minutes=20)
+        activation_token = create_access_token(data, expires_delta=expiry_time)
         activation_link = f"http://localhost:3000/activate?token={activation_token}"
         body = f"Click the following link to activate your account: {activation_link}"
-        # body = "Hello"
         message.attach(MIMEText(body, "plain"))
 
         server.sendmail(sender_email, recipient_email, message.as_string())
@@ -284,6 +284,17 @@ def google_signup(user: GoogleSignUp):
     except Exception as e:
         raise HTTPException(status_code=401, detail="Invalid ID token")
 
+@app.get('/resend_activation_link')
+def resend_activation_link(email : str):
+    try:
+        user_exists = users.find_one({'email' : email})
+        if user_exists == None:
+            return {"message" : "User does not exists."}
+        
+        send_email(email, str(user_exists['_id']))
+        
+    except Exception as e:
+        return {"message" : "Invalid Email id"}
 
 @app.post('/activate_user/{token}')
 def activate_user(token: str):
@@ -298,24 +309,49 @@ def activate_user(token: str):
         return {"message": "link is alredy expired."}
 
 
-@app.post('/forgot_password')
-def forgot_password(info: ForgotPassword):
+@app.get('/forgot_password/send_verification_mail')
+def send_verification_mail(recipient_email : str):
     try:
-        if_exists = users.find_one({"email": info.email})
-        if if_exists == None:
-            return {"message": "Email does not exists."}
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        message = MIMEMultipart()
+        message["From"] = sender_email
+        message["To"] = recipient_email
+        message["Subject"] = "Change Password"
+         
+        data = {'user_id': recipient_email}
+        expiry_time = timedelta(minutes=20)
+        activation_token = create_access_token(data, expires_delta=expiry_time)
+        activation_link = f"http://localhost:3000/change_password?verification_token={activation_token}"
+        body = f"Click the following link to change your password: {activation_link}"
+        message.attach(MIMEText(body, "plain"))
 
-        user_info = {
-            "full_name": if_exists["full_name"],
-            "email": info.email,
-            "username": if_exists["username"],
-            "password": hash_password(info.password),
-            "is_active": if_exists["is_active"]
-        }
-        result = users.update_one(
-            {"_id": if_exists['_id']}, {'$set': user_info})
-
-        return {"message": "Your password updated successfully."}
-
+        server.sendmail(sender_email, recipient_email, message.as_string())
+        server.quit()
+        return {"message" : "Check Your email to change your password."}
     except Exception as e:
-        pass
+        raise HTTPException(status_code=500, detail="Internal Server Error.")
+
+
+@app.post('/change_password/verification_check')
+def change_password_verification(info: ChangePassword):
+    try:
+        user_info = jwt.decode(info.token, SECRET_KEY, algorithms=ALGORITHM)
+        data = users.find_one({'email' : user_info['user_id']})
+        
+        updated_info = {
+            "full_name" : data['full_name'],
+            "username" : data['username'],
+            "email" : data["email"],
+            "password" : hash_password(info.password),
+            'is_active':data['is_active']
+        }
+
+        result = users.update_one({'_id' : data['_id']}, {'$set' : updated_info})
+        
+        return {"message" : "Password has been updated successfully."}
+        
+    except Exception as e:
+        print(e)
+        return {"message" : "Link has already expired."}

@@ -3,8 +3,8 @@ def UserSerializer(user) -> dict:
     return {
         "user_id": str(user['_id']),
         "full_name": user["full_name"],
-        "email": user["email"],
         "username": user["username"],
+        "email": user["email"],
         "password": user["password"],
         "is_active" : user['is_active']
     }
