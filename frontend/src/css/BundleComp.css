@@ -1,0 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=Concert+One&display=swap');
+
+.bundle-div{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 10px;
+}
+
+.bundle-heading{
+  color: white;
+  text-align: center;
+  font-size: 30px;
+  font-family: 'Concert One', cursive;
+}
+
+.atom {
+  display: flex;
+  width: 300px;
+  height: 300px;
+  align-items: center;
+  justify-content: center;
+  transform: rotateX(0deg);
+  transition: all 0.3s linear;
+}
+
+.atom:hover{
+  transform: scale(1.15);
+}
+
+.atom:hover .line-1{
+  animation: line1 1s linear infinite forwards;
+}
+.atom:hover  .line-2{
+  animation: line2 1s linear infinite forwards;
+}
+.atom:hover .line-3{
+  animation: line3 1s linear infinite forwards;
+}
+
+
+.nucleus{
+  position: sticky;
+  z-index: 1;
+  width: 100px;
+  height: 100px;
+  border-radius:50%;
+}
+
+.bundle-image{
+  position: sticky;
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  animation: imageFade 2s infinite linear;
+}
+
+.electron{
+  width: 20px;
+  height: 10px;
+  background-color: white;
+  border-radius: 10px;
+  position: relative;
+  top: 30%;
+}
+
+.line {
+  width: 85%;
+  height: 85%;
+  position: absolute;
+  border-radius: 50%;
+}
+  
+.line-1 {
+  --color: #74727b;
+  border-left: 10px solid var(--color);
+  border-top: 10px solid var(--color);
+  border-bottom: 10px solid var(--color);
+  animation: line1 3s linear infinite forwards;
+  filter: drop-shadow(0 0 10px var(--color));
+}
+
+@keyframes line1 {
+  0% {
+    transform: rotateY(99deg) rotateZ(0deg);
+  }
+  100% {
+    transform: rotateY(99deg) rotateZ(360deg);
+  }
+}
+
+
+.line-2 {
+  --color: #74727b;
+  border-left: 10px solid var(--color);
+  border-top: 10px solid var(--color);
+  border-bottom: 10px solid var(--color);
+  animation: line2 3s linear infinite forwards;
+  filter: drop-shadow(0 0 10px var(--color));
+}
+
+@keyframes line2 {
+  0% {
+    transform: rotateX(80deg) rotateY(30deg) rotateZ(0deg);
+  }
+  100% {
+    transform: rotateX(80deg) rotateY(30deg) rotateZ(360deg);
+  }
+}
+
+
+.line-3 {
+  --color: #74727b;
+  border-left: 10px solid var(--color);
+  border-top: 10px solid var(--color);
+  border-bottom: 10px solid var(--color);
+  animation: line3 3s linear infinite forwards;
+  filter: drop-shadow(0 0 10px var(--color));
+}
+
+@keyframes line3 {
+  0% {
+    transform: rotateX(-80deg) rotateY(30deg) rotateZ(0deg);
+  }
+  100% {
+    transform: rotateX(-80deg) rotateY(30deg) rotateZ(360deg);
+  }
+}

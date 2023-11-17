@@ -309,7 +309,7 @@ def activate_user(token: str):
         return {"message": "link is alredy expired."}
 
 
-@app.get('/forgot_password/send_verification_mail')
+@app.get('/forgot_password/send_verification_mail/{recipient_email}')
 def send_verification_mail(recipient_email : str):
     try:
         server = smtplib.SMTP(smtp_server, smtp_port)

@@ -115,7 +115,9 @@ const handleSubmit  = async() => {
                 </div>
                 <input className="signup-input" name="email" type="email" placeholder="Enter email" value={formData.email} onChange = {handleInputChange}/>
                 <div className="signup-password-div">
-                    <input className="signup-input signup-input-password" ref={passwordInput} name="password" type="password" placeholder="Enter password" autoComplete="new-password" value={formData.password} onChange = {handleInputChange}/>
+                    <input aria-label="Password" aria-required="true" autoCapitalize="off" autoComplete="new-password" autoCorrect="off" ref={passwordInput} 
+                    className="signup-input signup-input-password" placeholder="Enter password" type="password" value={formData.password} name="password" 
+                    aria-autocomplete="list" onChange = {handleInputChange} />
                     <div className='signup-eye-button'>
                         {formData.password === "" ? null : <FontAwesomeIcon icon={passwordVisiblilityIcon} onClick={changeVisibility}/>}
                     </div>

@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway:200');
+
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+.chat-comp{
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+.chat-comp-container{
+    width: 100%;
+    height: 80%;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-evenly;
+}
+.chat-comp-history{
+    width: 20%;
+    height: 100%;
+    padding: 20px 0px;
+    display: flex;
+    font-family: 'Raleway';
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    border-radius: 5px;
+    background: rgba(73, 69, 69, 0.2);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.history-div{
+    width: 90%;
+    display: flex;
+    gap: 10px;
+    border-radius: 5px;
+    font-size: 13px;
+    padding: 10px 12px;
+    color: white;
+    cursor: pointer;
+}
+.history-div-text{
+    width: 100%;
+    white-space: nowrap;
+    text-overflow:ellipsis;
+    -moz-white-space: nowrap;
+    overflow: hidden;
+}
+.chat-icon{
+    font-size: 12px;
+}
+.delete-icon{
+    font-size: 12px;
+    cursor: pointer;
+}
+.chat-comp-prompt{
+    width: 75%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;  
+}
+.chat-prompt-chats{
+    width: 100%;
+    height: 89%;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    font-family: 'Raleway';
+    border-radius: 5px;
+    background: rgba(73, 69, 69, 0.2);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.chats-container{
+    width: 70%;
+    height: 90%;
+    overflow-y: scroll;
+}
+
+.chats-container::-webkit-scrollbar{
+    display: none;
+}
+
+.chat-prompt-chats-content{
+    font-size: 16px;
+    letter-spacing: 2px;
+    text-align: justify;
+}
+
+.chat-input-div{
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;  
+    align-items: center;
+    color: white;
+}
+.pen-icon{
+    position: absolute;
+    margin: 0px 10px;
+}
+.send-icon{
+    margin-left: -35px;
+    color: #5153f1;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.chat-input{
+    width: 100%;
+  box-sizing: border-box;
+  color: white;
+  font-size: 17px;
+  padding: 12px 0;
+  padding-left: 35px;
+  border-radius: 7px;
+  background-color: black;
+}

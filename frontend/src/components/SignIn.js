@@ -6,7 +6,6 @@ import '../css/SignIn.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { GoogleLogin } from '@react-oauth/google';
-import {useGoogleLogin} from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
 import SigninLottieAnimation from './SigninLottieAnimation';
 import SaaisHeader from './SaaisHeader';
@@ -14,8 +13,6 @@ import SaaisHeader from './SaaisHeader';
 const SignIn = () => {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  const [googleUser, setGoogleUser] = useState([]);
-  const [profile,setProfile] = useState([]);
 
   const[passwordVisiblility,setPasswordVisiblility] = useState(false);
   const passwordInput = useRef();
@@ -58,41 +55,13 @@ const SignIn = () => {
           'Content-Type': 'application/json',
         }
       })
-      console.log("response is ",response.data);
+      window.localStorage.setItem('accessToken', response.data.session_token);
+      navigate('/');
     }
     catch (error) {
       console.error('Error:', error);
     }
-    console.log("credentials ",credentialResponse.credential);
-    console.log(googleSigninData);
   }
-
-  // const handleGoogleSignin = useGoogleLogin({
-  //   onSuccess: (codeResponse) => setGoogleUser(codeResponse),
-  //   onError: (error) => console.log('Login Failed:', error)
-  // });
-
-  // useEffect(
-  //       () => {
-  //           if (googleUser) {
-  //               axios
-  //                   .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${googleUser.access_token}`, {
-  //                       headers: {
-  //                           Authorization: `Bearer ${googleUser.access_token}`,
-  //                           Accept: 'application/json'
-  //                       }
-  //                   })
-  //                   .then((res) => {
-  //                       setProfile(res.data);
-  //                       console.log("token id",res);
-  //                   })
-  //                   .catch((err) => console.log(err));
-  //                   console.log("google user is ", googleUser);
-  //                   console.log("profile is ",profile);
-  //           }
-  //       },
-  //       [ googleUser ]
-  //   );
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -112,7 +81,6 @@ const SignIn = () => {
       const expiresIn = 3600;
 
       window.localStorage.setItem('accessToken', access_token);
-      window.localStorage.setItem('username',user_name);
       window.localStorage.setItem('tokenExpiry', Date.now() + expiresIn * 1000);
 
       console.log(user_name);
@@ -120,7 +88,6 @@ const SignIn = () => {
 
       setTimeout(() => {
         window.localStorage.removeItem('accessToken');
-        window.localStorage.removeItem('username');
         window.localStorage.removeItem('tokenExpiry');
       }, expiresIn * 1000); 
 
@@ -162,7 +129,6 @@ const SignIn = () => {
           <GoogleLogin isSignedIn={true} onSuccess={googleSignin}  onError={() => {
                 console.log('Login Failed');
             }}/>
-          {/* <button type='button' onClick={handleGoogleSignin}>Sign in with google</button> */}
           <div className='signin-links-div'>
             <span >Don't have an account? <Link className='signin-links' to='/signup'>Register here</Link></span>
             <span><a className='signin-links' href='/'>Forget password?</a></span>
