@@ -9,7 +9,6 @@ function Header() {
     <div className='header'>
       <div className='logo'>SAAIS</div>
       <div className='menu'>
-        <div className='menu-item'>About us</div>
         {
         accessToken == null ? (
           <Link to="/signin" className="btn">

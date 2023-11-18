@@ -9,3 +9,9 @@
 .home-main{
     position: absolute;
 }
+
+@media screen and (max-width: 555px){
+    .container{
+        flex-direction: column-reverse;
+    }
+  }

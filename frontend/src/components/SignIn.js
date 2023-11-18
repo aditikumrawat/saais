@@ -126,12 +126,12 @@ const SignIn = () => {
             </div>
           </div>
           <button type="submit" className="signin-button">Login</button>
-          <GoogleLogin isSignedIn={true} onSuccess={googleSignin}  onError={() => {
+          <GoogleLogin theme='filled_black' text='continue_with' shape='rectangular' size='small' isSignedIn={true} onSuccess={googleSignin}  onError={() => {
                 console.log('Login Failed');
             }}/>
           <div className='signin-links-div'>
-            <span >Don't have an account? <Link className='signin-links' to='/signup'>Register here</Link></span>
-            <span><a className='signin-links' href='/'>Forget password?</a></span>
+            <span style={{textAlign:'center'}} >Don't have an account? <Link className='signin-links' to='/signup'>Register here</Link></span>
+            <span><Link className='signin-links' to='/forgetPassword'>Forget password?</Link></span>
           </div>
         </form>
       </div>

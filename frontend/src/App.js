@@ -8,13 +8,13 @@ import { loadSlim } from "tsparticles-slim";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
-import Dashboard from "./components/Dashboard";
 import BeforeAcitvation from "./components/BeforeAcitvation";
 import AfterAcivation from "./components/AfterAcivation";
 import ChatComp from "./components/ChatComp";
 import ForgetPassword from "./components/ForgetPassword";
 import ChangePassword from "./components/ChangePassword";
-import BundleComp from "./components/BundleComp";
+import Profile from "./components/Profile";
+import Services from "./components/Services";
 
 function App() {
 
@@ -106,15 +106,15 @@ const particlesLoaded = useCallback(async container => {
       <Routes>
         <Route path="/" element={<Home />}></Route>
         <Route path="/bundle" element={<Bundle />}></Route>
-        <Route path="/bundleComp" element={<BundleComp />}></Route>
         <Route path="/signin" element={<SignIn />}></Route>
         <Route path="/signup" element={<SignUp />}></Route>
-        <Route path="/dashboard" element={<Dashboard />}></Route>
         <Route path="/beforeActivation" element={<BeforeAcitvation />}/>
         <Route path="/activate" element={<AfterAcivation/>}/>
         <Route path="/chatComp" element={<ChatComp />}/>
         <Route path="/forgetPassword" element={<ForgetPassword />}/>
         <Route path="/change_password" element={<ChangePassword />}/>
+        <Route path="/profile" element={<Profile />}/>
+        <Route path="/services" element={<Services />}/>
       </Routes>
       </GoogleOAuthProvider>
     </BrowserRouter>

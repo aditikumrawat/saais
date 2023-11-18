@@ -108,7 +108,7 @@ const handleSubmit  = async() => {
                 </div>
                 <input className="signup-input" name="fullName" type="text" placeholder="Enter full name" value={formData.fullName} onChange = {handleInputChange}/>
                 <div className="signup-username-div">
-                    <input className="signup-input signup-input-username" name="username" type="text" placeholder="Create Username" value={formData.username} onChange = {handleInputChange} onFocus={formData.fullName === "" ? null : generateUsername}/>
+                    <input className="signup-input-username" name="username" type="text" placeholder="Create Username" value={formData.username} onChange = {handleInputChange} onFocus={formData.fullName === "" ? null : generateUsername}/>
                     <div className='signup-username-tick'>
                         {formData.username === "" ? null : <FontAwesomeIcon icon={usernameCheckIcon} style={usernameCheckIcon === faCheck ? {color:'#3ee133'} : {color:'#ff2929'}}/>}
                     </div>
@@ -116,7 +116,7 @@ const handleSubmit  = async() => {
                 <input className="signup-input" name="email" type="email" placeholder="Enter email" value={formData.email} onChange = {handleInputChange}/>
                 <div className="signup-password-div">
                     <input aria-label="Password" aria-required="true" autoCapitalize="off" autoComplete="new-password" autoCorrect="off" ref={passwordInput} 
-                    className="signup-input signup-input-password" placeholder="Enter password" type="password" value={formData.password} name="password" 
+                    className="signup-input-password" placeholder="Enter password" type="password" value={formData.password} name="password" 
                     aria-autocomplete="list" onChange = {handleInputChange} />
                     <div className='signup-eye-button'>
                         {formData.password === "" ? null : <FontAwesomeIcon icon={passwordVisiblilityIcon} onClick={changeVisibility}/>}

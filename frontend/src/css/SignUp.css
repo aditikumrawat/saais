@@ -21,6 +21,7 @@
 .signup-form{
   width: 50%;
   height: 100%;
+  padding: 10px 0px;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -47,15 +48,14 @@
 }
 
 .signup-heading-div{
-  padding-bottom: 20px;
-  margin-left: -20px;
+  width: 100%;
+  text-align: center;
 }
 
 .signup-heading{
-  font-size: 35px;
+  font-size: 30px;
   font-family: 'Raleway';
   font-weight: 800;
-  margin-bottom: 20px;
 }
 
 .signup-input{
@@ -94,12 +94,19 @@
   cursor: pointer;
 }
 
-.signup-input-password{
+.signup-input-password, .signup-input-username{
   width: 100%;
+  box-sizing: border-box;
+  color: white;
+  padding: 12px 12px;
+  border-radius: 7px;
+  background-color: rgb(67, 66, 66);
 }
-.signup-input-username{
-  width: 100%;
+
+.signup-input-username::placeholder, .signup-input-password::placeholder{
+  color:white;
 }
+
 .suggest-password-div{
     box-sizing: border-box;
     width: 60%;
@@ -142,5 +149,38 @@
   }
   100%{
     opacity: 1;
+  }
+}
+
+@media screen and (max-width: 850px){
+  .signup-container{
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 670px){
+  .signup-heading{
+    font-size: 23px;
+  }
+  .signup-input{
+    width: 90%;
+  }
+  .signup-password-div{
+    width: 90%;
+  }
+  .signup-username-div{
+    width: 90%;
+  }
+  .signup-button{
+    width: 90%;
+  }
+}
+
+@media screen and (max-width: 670px){
+  .signup-animation{
+    display: none;
+  }
+  .signup-form{
+    width: 80%;
   }
 }

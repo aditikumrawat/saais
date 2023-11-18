@@ -17,3 +17,10 @@
         transform: scale(1);
     }
 }
+
+@media screen and (max-width: 555px){
+    .home-lottie-Animation{
+        margin-top: 30px;
+        width: 60%;
+    }
+}
