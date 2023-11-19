@@ -361,14 +361,20 @@ def change_password_verification(info: ChangePassword):
         return {"message": "Link has already expired."}
 
 
+@app.get('/get_user_details')
+def get_user_using_token(token: str):
+    data =  jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+    print(data)
+    
+
+
 @app.put('/edit_user_profile')
 def edit_profile(user: User):
-    is_exists = users.find_one({'email' : user.email})
-    
+    is_exists = users.find_one({'email': user.email})
+
     if is_exists:
-        users.update_one({'_id' : is_exists['_id']}, 
-                        {'$set' : user})
-        return {"message" : "User detail updated successfully."}
-    
+        users.update_one({'_id': is_exists['_id']},
+                         {'$set': user})
+        return {"message": "User detail updated successfully."}
+
     raise HTTPException(status_code=404, detail="User not found")
-        
