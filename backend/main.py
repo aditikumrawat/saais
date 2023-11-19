@@ -104,7 +104,7 @@ def send_email(recipient_email, user_id):
         message["From"] = sender_email
         message["To"] = recipient_email
         message["Subject"] = "Activate your account"
-        
+
         data = {'user_id': user_id}
         expiry_time = timedelta(minutes=20)
         activation_token = create_access_token(data, expires_delta=expiry_time)
@@ -135,6 +135,7 @@ def register_user(user: User):
             "username": user.username,
             "email": user.email,
             "password": hashed_password,
+            "phone_no": None,
             "is_active": False
         }
 
@@ -272,6 +273,7 @@ def google_signup(user: GoogleSignUp):
             "email": user.email,
             "username": user.username,
             "password": None,
+            "phone_no": None,
             "is_active": True,
         }
 
@@ -284,17 +286,19 @@ def google_signup(user: GoogleSignUp):
     except Exception as e:
         raise HTTPException(status_code=401, detail="Invalid ID token")
 
+
 @app.get('/resend_activation_link')
-def resend_activation_link(email : str):
+def resend_activation_link(email: str):
     try:
-        user_exists = users.find_one({'email' : email})
+        user_exists = users.find_one({'email': email})
         if user_exists == None:
-            return {"message" : "User does not exists."}
-        
+            return {"message": "User does not exists."}
+
         send_email(email, str(user_exists['_id']))
-        
+
     except Exception as e:
-        return {"message" : "Invalid Email id"}
+        return {"message": "Invalid Email id"}
+
 
 @app.post('/activate_user/{token}')
 def activate_user(token: str):
@@ -310,7 +314,7 @@ def activate_user(token: str):
 
 
 @app.get('/forgot_password/send_verification_mail/{recipient_email}')
-def send_verification_mail(recipient_email : str):
+def send_verification_mail(recipient_email: str):
     try:
         server = smtplib.SMTP(smtp_server, smtp_port)
         server.starttls()
@@ -319,7 +323,7 @@ def send_verification_mail(recipient_email : str):
         message["From"] = sender_email
         message["To"] = recipient_email
         message["Subject"] = "Change Password"
-         
+
         data = {'user_id': recipient_email}
         expiry_time = timedelta(minutes=20)
         activation_token = create_access_token(data, expires_delta=expiry_time)
@@ -329,7 +333,7 @@ def send_verification_mail(recipient_email : str):
 
         server.sendmail(sender_email, recipient_email, message.as_string())
         server.quit()
-        return {"message" : "Check Your email to change your password."}
+        return {"message": "Check Your email to change your password."}
     except Exception as e:
         raise HTTPException(status_code=500, detail="Internal Server Error.")
 
@@ -338,20 +342,33 @@ def send_verification_mail(recipient_email : str):
 def change_password_verification(info: ChangePassword):
     try:
         user_info = jwt.decode(info.token, SECRET_KEY, algorithms=ALGORITHM)
-        data = users.find_one({'email' : user_info['user_id']})
-        
+        data = users.find_one({'email': user_info['user_id']})
+
         updated_info = {
-            "full_name" : data['full_name'],
-            "username" : data['username'],
-            "email" : data["email"],
-            "password" : hash_password(info.password),
-            'is_active':data['is_active']
+            "full_name": data['full_name'],
+            "username": data['username'],
+            "email": data["email"],
+            "password": hash_password(info.password),
+            'phone_no': data["phone_no"],
+            'is_active': data['is_active']
         }
 
-        result = users.update_one({'_id' : data['_id']}, {'$set' : updated_info})
-        
-        return {"message" : "Password has been updated successfully."}
-        
+        result = users.update_one({'_id': data['_id']}, {'$set': updated_info})
+
+        return {"message": "Password has been updated successfully."}
     except Exception as e:
         print(e)
-        return {"message" : "Link has already expired."}
+        return {"message": "Link has already expired."}
+
+
+@app.put('/edit_user_profile')
+def edit_profile(user: User):
+    is_exists = users.find_one({'email' : user.email})
+    
+    if is_exists:
+        users.update_one({'_id' : is_exists['_id']}, 
+                        {'$set' : user})
+        return {"message" : "User detail updated successfully."}
+    
+    raise HTTPException(status_code=404, detail="User not found")
+        
