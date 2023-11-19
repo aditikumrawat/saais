@@ -364,8 +364,11 @@ def change_password_verification(info: ChangePassword):
 @app.get('/get_user_details')
 def get_user_using_token(token: str):
     data =  jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
-    print(data)
-    
+    info = users.find_one({'username' : data['sub']})
+    info['_id'] = str(info['_id'])
+    if info :
+        return info
+    return {"message" : "User details not found."}
 
 
 @app.put('/edit_user_profile')

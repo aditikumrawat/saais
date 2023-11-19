@@ -10,7 +10,7 @@ class User(BaseModel):
     email: EmailStr = Field(default=None)
     username: str = Field(default=None)
     password: str = Field(default=None)
-    phone_no: str = Field(default=None)
+    phone_no : str =Field(default=None)
 
     is_active: bool = Field(default=False)
 
@@ -37,20 +37,18 @@ class Login(BaseModel):
 class GoogleSignUp(BaseModel):
     full_name: str = Field(default=None)
     email: EmailStr = Field(default=None)
-    username: str = Field(default=None)
-
+    username : str = Field(default=None)
+    
     is_active: bool = Field(default=False)
-    id_token: str
-
+    id_token: str 
 
 class ForgotPassword(BaseModel):
-    email: str = Field(default=None)
-    password: str = Field(default=None)
-
-
+    email : str = Field(default=None)
+    password : str = Field(default=None)
+    
 class ChangePassword(BaseModel):
-    token: str = Field(default=None)
-    password: str = Field(default=None)
+    token : str = Field(default=None)
+    password : str = Field(default=None)
 
 # class Bundle(BaseModel):
 #     bundle_title: Optional[str] = Field(default=None)
