@@ -363,22 +363,39 @@ def change_password_verification(info: ChangePassword):
 
 @app.get('/get_user_details/{token}')
 def get_user_using_token(token: str):
-    data =  jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
-    info = users.find_one({'username' : data['sub']})
+    data = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+    info = users.find_one({'username': data['sub']})
     info['_id'] = str(info['_id'])
-    if info :
+    if info:
         return info
-    return {"message" : "User details not found."}
+    return {"message": "User details not found."}
 
 
-# @app.post('/edit_user_profile')
-# def edit_profile(user: User):
-#     is_exists = users.find_one({'email': user.email})
-#     print(is_exists)
+@app.post('/edit_user_profile')
+def edit_profile(user: User):
+    is_exists = users.find_one({'email': user.email})
+    print(is_exists)
 
-#     if is_exists:
-#         users.update_one({'_id': is_exists['_id']},
-#                          {'$set': user})
-#         return {"message": "User detail updated successfully."}
+    if is_exists:
+        users.update_one({'_id': is_exists['_id']},
+                         {'$set': user})
+        return {"message": "User detail updated successfully."}
 
-#     raise HTTPException(status_code=404, detail="User not found")
+    raise HTTPException(status_code=404, detail="User not found")
+
+
+@app.put("/edit_user_profile/{token}")
+def update_user(token: str, user: User):
+    try:
+        data = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+        info = users.find_one({'username': data['sub']})
+
+        if info:
+            users.update_one({'_id': info['_id']}, {
+                             '$set': dict(user)})
+            return {"message": "User detail updated successfully."}
+        else:
+            raise HTTPException(status_code=404, detail="User not found")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
