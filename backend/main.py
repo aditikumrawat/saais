@@ -280,10 +280,11 @@ def google_signup(user: GoogleSignUp):
         result = users.insert_one(info)
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         session_token = create_access_token(
-            data={"sub": user_info}, expires_delta=access_token_expires)
+            data={"sub": user.username}, expires_delta=access_token_expires)
 
         return {"session_token": session_token}
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=401, detail="Invalid ID token")
 
 
