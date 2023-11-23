@@ -278,9 +278,9 @@ def google_signup(user: GoogleSignUp):
         }
 
         result = users.insert_one(info)
-
-        session_token = jwt.encode(
-            {"user_info": user_info}, SECRET_KEY, algorithm=ALGORITHM)
+        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        session_token = create_access_token(
+            data={"sub": user_info}, expires_delta=access_token_expires)
 
         return {"session_token": session_token}
     except Exception as e:
