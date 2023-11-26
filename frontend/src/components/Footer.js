@@ -8,9 +8,9 @@ const Footer = () => {
     <div className='footer'>
         <div className='footer-company'>
             <div className='footer-company-name'>SAAIS</div>
-            <span className='footer-company-descp'>It is a platform designed to assist aspiring entrepreneurs 
+            <div className='footer-company-descp'>It is a platform designed to assist aspiring entrepreneurs 
             and new business owners in launching and growing their ventures. This user-friendly website provides a wealth of 
-            resources, tools, and guidance to streamline the process of starting a business.</span>
+            resources, tools, and guidance to streamline the process of starting a business.</div>
         </div>
         <div className='footer-links'>
             <FontAwesomeIcon className='footer-link' icon={faLinkedin} size='xl'/>

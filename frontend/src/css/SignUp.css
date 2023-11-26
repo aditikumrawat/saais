@@ -76,7 +76,7 @@
 }
 
 .signup-password-div{
-  width: 60%;
+  width: 100%;
   display: flex;
 }
 
@@ -119,6 +119,25 @@
 .suggest-password-button{
   background-color: #5153f1;
 }
+.confirm-password-input{
+  width: 100%;
+  box-sizing: border-box;
+  color: white;
+  padding: 12px 12px;
+  border-radius: 7px;
+  background-color: rgb(67, 66, 66);
+}
+
+.confirm-password-input::placeholder{
+  color:white;
+}
+
+.confirm-password-div, .password-div{
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
 .signup-button{
   width:60%;
   padding: 12px 0px;
@@ -132,6 +151,16 @@
 
 .signup-button:hover{
   box-shadow: rgba(231, 230, 230, 0.35) 0px 5px 15px;
+}
+
+.signup-button:disabled {
+  cursor: not-allowed;
+}
+
+.password-match-error{
+  font-size: 14px;
+  color: red;
+  margin-top: 5px;
 }
 
 .signup-links{

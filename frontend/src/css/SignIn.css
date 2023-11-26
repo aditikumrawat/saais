@@ -96,6 +96,10 @@
   box-shadow: rgba(231, 230, 230, 0.35) 0px 5px 15px;
 }
 
+.signin-button:disabled {
+  cursor: not-allowed;
+}
+
 .signin-welcome{
   width: 60%;
   text-align: center;
