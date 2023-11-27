@@ -26,7 +26,7 @@ import re
 SECRET_KEY = config("secret")
 ALGORITHM = config("algorithm")
 GOOGLE_CLIENT_ID = config("google_client_id")
-ACCESS_TOKEN_EXPIRE_MINUTES = 1
+ACCESS_TOKEN_EXPIRE_MINUTES = 1440
 
 smtp_port = 587
 smtp_server = config("smtp_server")
@@ -141,10 +141,10 @@ def register_user(user: User):
 
         if is_valid_password(user.password) == False:
             return {"Error": "Password is not valid."}
-        
+
         if '@' in user.password:
-            return {"message" : "Do not user @ in the password."} 
-        
+            return {"message": "Do not user @ in the password."}
+
         hashed_password = hash_password(user.password)
 
         user_info = {
@@ -248,6 +248,12 @@ def generate_username(full_name: str):
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user = authenticate_user(form_data.username, form_data.password)
 
+    if form_data.username == None:
+        return {"message": "Username/Email field can not be empty."}
+
+    if form_data.password == None:
+        return {"message": "Password field can not be empty."}
+
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="Invalid credentials",
@@ -326,9 +332,9 @@ def activate_user(token: str):
 
         if_exists["is_active"] = True
         users.update_one({'_id': if_exists['_id']}, {"$set": if_exists})
-        return {"Message": "Activate the user successfully."}
+        return {"message": "Activate the user successfully."}
     except JWTError:
-        return {"message": "link is alredy expired."}
+        return {"message": "link expired."}
 
 
 @app.get('/forgot_password/send_verification_mail/{recipient_email}')
@@ -375,18 +381,20 @@ def change_password_verification(info: ChangePassword):
 
         return {"message": "Password has been updated successfully."}
     except Exception as e:
-        print(e)
         return {"message": "Link has already expired."}
 
 
 @app.get('/get_user_details/{token}')
 def get_user_using_token(token: str):
-    data = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
-    info = users.find_one({'username': data['sub']})
-    info['_id'] = str(info['_id'])
-    if info:
-        return info
-    return {"message": "User details not found."}
+    try:
+        data = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+        info = users.find_one({'username': data['sub']})
+        info['_id'] = str(info['_id'])
+        if info:
+            return info
+        return {"message": "User details not found."}
+    except Exception as e:
+        return {"message": "Token expired"}
 
 
 @app.post('/edit_user_profile')
@@ -414,6 +422,7 @@ def update_user(token: str, user: User):
             return {"message": "User detail updated successfully."}
         else:
             raise HTTPException(status_code=404, detail="User not found")
+    except JWTError:
+        return {"message": "Token expired"}
     except Exception as e:
-        print(f"An error occurred: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
