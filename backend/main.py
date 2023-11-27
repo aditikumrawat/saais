@@ -321,7 +321,7 @@ def resend_activation_link(email: str):
         send_email(email, str(user_exists['_id']))
 
     except Exception as e:
-        return {"message": "Invalid Email id"}
+        return {"message": "User doesn't exist"}
 
 
 @app.post('/activate_user/{token}')
@@ -332,9 +332,9 @@ def activate_user(token: str):
 
         if_exists["is_active"] = True
         users.update_one({'_id': if_exists['_id']}, {"$set": if_exists})
-        return {"message": "Activate the user successfully."}
+        return {"message": "Activate the user successfully"}
     except JWTError:
-        return {"message": "link expired."}
+        return {"message": "link expired"}
 
 
 @app.get('/forgot_password/send_verification_mail/{recipient_email}')
@@ -381,7 +381,7 @@ def change_password_verification(info: ChangePassword):
 
         return {"message": "Password has been updated successfully."}
     except Exception as e:
-        return {"message": "Link has already expired."}
+        return {"message": "Link expired."}
 
 
 @app.get('/get_user_details/{token}')
@@ -396,18 +396,6 @@ def get_user_using_token(token: str):
     except Exception as e:
         return {"message": "Token expired"}
 
-
-@app.post('/edit_user_profile')
-def edit_profile(user: User):
-    is_exists = users.find_one({'email': user.email})
-    print(is_exists)
-
-    if is_exists:
-        users.update_one({'_id': is_exists['_id']},
-                         {'$set': user})
-        return {"message": "User detail updated successfully."}
-
-    raise HTTPException(status_code=404, detail="User not found")
 
 
 @app.put("/edit_user_profile/{token}")
