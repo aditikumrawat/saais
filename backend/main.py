@@ -20,12 +20,13 @@ import requests
 import random
 import smtplib
 from decouple import config
+import re
 
 
 SECRET_KEY = config("secret")
 ALGORITHM = config("algorithm")
 GOOGLE_CLIENT_ID = config("google_client_id")
-ACCESS_TOKEN_EXPIRE_MINUTES = 50
+ACCESS_TOKEN_EXPIRE_MINUTES = 1
 
 smtp_port = 587
 smtp_server = config("smtp_server")
@@ -119,15 +120,31 @@ def send_email(recipient_email, user_id):
         print(f"Error: {str(e)}")
 
 
+def is_valid_password(password):
+    if re.search(r'[!#$%^&*<>-]', password) and re.search(r'[a-z]', password) and re.search(r'[A-Z]', password):
+        return True
+    else:
+        return False
+
+
 @app.post("/register_user")
 def register_user(user: User):
     try:
+        if user.email == None or user.username == None or user.password == None:
+            return {"message": "Field cannot be empty."}
+
         existing_user_email = users.find_one({"email": user.email})
         existing_username = users.find_one({"username": user.username})
 
         if existing_user_email or existing_username:
             return {"message": "Email already exits."}
 
+        if is_valid_password(user.password) == False:
+            return {"Error": "Password is not valid."}
+        
+        if '@' in user.password:
+            return {"message" : "Do not user @ in the password."} 
+        
         hashed_password = hash_password(user.password)
 
         user_info = {
