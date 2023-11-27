@@ -368,6 +368,9 @@ def change_password_verification(info: ChangePassword):
         user_info = jwt.decode(info.token, SECRET_KEY, algorithms=ALGORITHM)
         data = users.find_one({'email': user_info['user_id']})
 
+        if data == None:
+            return {"message": "Invalid token"}
+
         updated_info = {
             "full_name": data['full_name'],
             "username": data['username'],
@@ -395,7 +398,6 @@ def get_user_using_token(token: str):
         return {"message": "User details not found."}
     except Exception as e:
         return {"message": "Token expired"}
-
 
 
 @app.put("/edit_user_profile/{token}")
