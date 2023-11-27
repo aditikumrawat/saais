@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect} from 'react';
+import React, { useState, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -63,7 +63,7 @@ const SignIn = () => {
         }
       })
       window.localStorage.setItem('accessToken', response.data.session_token);
-      navigate('/');
+      navigate('/chatComp');
     }
     catch (error) {
       console.error('Error:', error);
@@ -88,37 +88,14 @@ const SignIn = () => {
         },
       });
       const access_token = response.data.access_token;
-      const user_name = response.data.username;
-      const expiresIn = 3600;
-
       window.localStorage.setItem('accessToken', access_token);
-      window.localStorage.setItem('tokenExpiry', Date.now() + expiresIn * 1000);
 
-      console.log(user_name);
-      console.log(access_token);
-
-      setTimeout(() => {
-        window.localStorage.removeItem('accessToken');
-        window.localStorage.removeItem('tokenExpiry');
-      }, expiresIn * 1000); 
-
-      navigate('/');
+      navigate('/chatComp');
       
     } catch (error) {
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    // Check if the access token has expired
-    const tokenExpiry = window.localStorage.getItem('tokenExpiry');
-    if (tokenExpiry && Date.now() > parseInt(tokenExpiry, 10)) {
-      // Token has expired, remove it from localStorage
-      window.localStorage.removeItem('accessToken');
-      window.localStorage.removeItem('username');
-      window.localStorage.removeItem('tokenExpiry');
-    }
-  }, []);
 
   return (
     <div className='signin'>

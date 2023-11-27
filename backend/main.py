@@ -26,7 +26,7 @@ import re
 SECRET_KEY = config("secret")
 ALGORITHM = config("algorithm")
 GOOGLE_CLIENT_ID = config("google_client_id")
-ACCESS_TOKEN_EXPIRE_MINUTES = 1
+ACCESS_TOKEN_EXPIRE_MINUTES = 15
 
 smtp_port = 587
 smtp_server = config("smtp_server")
@@ -261,7 +261,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     }
 
 
-@app.get('/is_valid')
+@app.get('/is_valid/{token}')
 def is_valid(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
