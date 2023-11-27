@@ -91,6 +91,115 @@
     overflow-y: scroll;
 }
 
+.loader-container{
+    width: 70%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+}
+
+.loader-atom {
+    display: flex;
+    width: 200px;
+    height: 200px;
+    align-items: center;
+    justify-content: center;
+    transform: rotateX(0deg);
+    transition: all 0.3s linear;
+    animation: atomRotate linear infinite 40s;
+  }
+
+  @keyframes atomRotate{
+    0%{
+        transform: rotate(0deg);
+    }
+    100%{
+        transform: rotate(360deg);
+    }
+  }
+
+  .loader-line {
+    width: 85%;
+    height: 85%;
+    position: absolute;
+    border-radius: 50%;
+  }
+
+  .electron{
+    width: 20px;
+    height: 10px;
+    background-color: white;
+    border-radius: 10px;
+    position: relative;
+    top: 30%;
+  }
+
+  .line-1 {
+    --color: #74727b;
+    border-left: 10px solid var(--color);
+    border-top: 10px solid var(--color);
+    border-bottom: 10px solid var(--color);
+    animation: line1 3s linear infinite forwards;
+    filter: drop-shadow(0 0 10px var(--color));
+  }
+  
+  @keyframes line1 {
+    0% {
+      transform: rotateY(99deg) rotateZ(0deg);
+    }
+    100% {
+      transform: rotateY(99deg) rotateZ(360deg);
+    }
+  }
+  
+  
+  .line-2 {
+    --color: #74727b;
+    border-left: 10px solid var(--color);
+    border-top: 10px solid var(--color);
+    border-bottom: 10px solid var(--color);
+    animation: line2 3s linear infinite forwards;
+    filter: drop-shadow(0 0 10px var(--color));
+  }
+  
+  @keyframes line2 {
+    0% {
+      transform: rotateX(80deg) rotateY(30deg) rotateZ(0deg);
+    }
+    100% {
+      transform: rotateX(80deg) rotateY(30deg) rotateZ(360deg);
+    }
+  }
+  
+  
+  .line-3 {
+    --color: #74727b;
+    border-left: 10px solid var(--color);
+    border-top: 10px solid var(--color);
+    border-bottom: 10px solid var(--color);
+    animation: line3 3s linear infinite forwards;
+    filter: drop-shadow(0 0 10px var(--color));
+  }
+  
+  @keyframes line3 {
+    0% {
+      transform: rotateX(-80deg) rotateY(30deg) rotateZ(0deg);
+    }
+    100% {
+      transform: rotateX(-80deg) rotateY(30deg) rotateZ(360deg);
+    }
+  }
+  
+
+.quote{
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+}
+
 .chats-container::-webkit-scrollbar{
     display: none;
 }
@@ -124,8 +233,7 @@
   box-sizing: border-box;
   color: white;
   font-size: 17px;
-  padding: 12px 0;
-  padding-left: 35px;
+  padding: 12px 35px;
   border-radius: 7px;
   background-color: black;
 }

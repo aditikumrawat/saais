@@ -42,12 +42,19 @@ const SignIn = () => {
 
   const googleSignin = async(credentialResponse) =>{
     const credentialsDecoded = jwtDecode(credentialResponse.credential);
+    let username= "";
+    try{
+      const response = await axios.get(`http://localhost:8000/generate_username/${credentialsDecoded.name}`);
+      username = response.data;
+    }catch (error) {
+      console.error('Error:', error);
+    }
     const googleSigninData = {
       "full_name": credentialsDecoded.name,
       "email": credentialsDecoded.email,
       "is_active": false,
       "id_token": credentialResponse.credential,
-
+      "username" : username,
     }
     try{
       const response = await axios.post('http://localhost:8000/auth/google',googleSigninData,{
@@ -61,6 +68,10 @@ const SignIn = () => {
     catch (error) {
       console.error('Error:', error);
     }
+  }
+
+  const isFormValid = () => {
+    return (username !== '' && password !== '')
   }
 
   const handleSubmit = async (e) => {
@@ -118,14 +129,14 @@ const SignIn = () => {
         </div>
         <form className='signin-form' onSubmit={handleSubmit} action="">
           <span className='signin-welcome'>Welcome back</span>
-          <input name="username" id="username" className='signin-input signin-input-username' type="text" placeholder="Enter your username" value={username} onChange={(e) => handleInputChange(e)} />
+          <input name="username" id="username" className='signin-input signin-input-username' type="text" placeholder="Enter your username" value={username} onChange={(e) => handleInputChange(e)} autoComplete="off"/>
           <div className='signin-password-div'>
-            <input ref={passwordInput} name="password" id="password" className='signin-input signin-input-password' type="password" placeholder="Enter password" value={password} onChange={(e) => handleInputChange(e)} />
+            <input ref={passwordInput} name="password" id="password" className='signin-input signin-input-password' type="password" placeholder="Enter password" value={password} onChange={(e) => handleInputChange(e)} autoComplete="off"/>
             <div className='signin-eye-button'>
               <FontAwesomeIcon icon={faEye} onClick={changeVisibility}/>
             </div>
           </div>
-          <button type="submit" className="signin-button">Login</button>
+          <button type="submit" className="signin-button" disabled={!isFormValid()}>Login</button>
           <GoogleLogin theme='filled_black' text='continue_with' shape='rectangular' size='small' isSignedIn={true} onSuccess={googleSignin}  onError={() => {
                 console.log('Login Failed');
             }}/>
