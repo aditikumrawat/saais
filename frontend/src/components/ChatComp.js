@@ -48,9 +48,15 @@ const ChatComp = () => {
 
   const generateResult = async() => {
       setLoading(true);
-      const response = await axios.get('http://localhost:8000/');
+      const response = await axios.post('http://localhost:8000/query-model',
+      {"query": document.getElementsByClassName("chat-input")[0].value},
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
 
-      setText(response.data);
+      setText(response.data.text);
   }
 
   return ( 
