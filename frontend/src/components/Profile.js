@@ -1,12 +1,32 @@
 import {React, useEffect, useState} from "react";
 import axios from "axios";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCamera } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 import "../css/Profile.css";
 import SaaisHeader from "./SaaisHeader";
-import user_image_header from "../images/user_image_header.jpg";
 
 const Profile = () => {
+  const [isTokenValid, setIsTokenValid] = useState(false);
+  const token = localStorage.getItem('accessToken');
+
+  const [msg, setMsg] = useState('');
+
+  const navigate = useNavigate(); 
+
+  useEffect(() =>{
+    (async () =>{
+      try{
+        const response = await axios.get(`http://localhost:8000/is_valid/${token}`);
+        if(response.data === true){
+          setIsTokenValid(true);
+        }
+        else{
+          navigate('/signin');
+        }
+      }catch (error) {
+        console.error('Error:', error);
+      }
+    })();
+},[token])
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
@@ -15,10 +35,6 @@ const Profile = () => {
     password: "",
     is_active: "",
   });
-
-  const one = 1;
-
-  const token = localStorage.getItem('accessToken');
 
   useEffect(() =>{
     (async () =>{
@@ -38,14 +54,14 @@ const Profile = () => {
         console.error('Error:', error);
       }
     })();
-},[one])
+},[token, isTokenValid])
 
   const changePassword = async() => {
     try{
       const response = await axios.get(`http://localhost:8000/forgot_password/send_verification_mail/${formData.email}`);
       console.log(response);
       if(response.status === 200){
-        alert("Change your password by clicking the link send to your mail");
+        setMsg("Change your password by clicking the link send to your mail");
       }
     }
     catch (error) {
@@ -76,8 +92,8 @@ const Profile = () => {
               'Content-Type': 'application/json',
             }
         });
-        console.log(response);
-      }
+        setMsg(response.data);
+     }
       catch (error) {
         console.error('Error:', error);
       }
@@ -89,18 +105,13 @@ const Profile = () => {
       <div className="profile-container">
         <div className="profile-heading">User Profile</div>
         <div className="profile-upper-div">
-          <div className="profile-img-div">
-            <div>
-                <img className="profile-img" src={user_image_header} alt="img" />
-                <FontAwesomeIcon className="camera-icon" icon={faCamera}/>
-            </div>
-            <button type="button" className="profile-change-password" onClick={changePassword}>Change Password</button>
-          </div>
           <div className="profile-intro">
+            <div className="msg">{msg}</div>
+            <button type="button" className="profile-change-password" onClick={changePassword}>Change Password</button>
             <input className="profile-input" placeholder="Name" name="full_name" value={formData.full_name} onChange={handleInputChange}/>
             <input className="profile-input" placeholder="Username" name="username" value={formData.username} onChange={handleInputChange}/>
             <input className="profile-input" placeholder="Email" name="email" value={formData.email} onChange={handleInputChange}/>
-            <input className="profile-input" placeholder="phone_no" name="phone_no" value={formData.phone_no} onChange={handleInputChange}/>
+            <input className="profile-input" placeholder="Mobile number" name="phone_no" value={formData.phone_no} onChange={handleInputChange}/>
           </div>
         </div>
         <div className="profile-buttons-div">

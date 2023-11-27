@@ -6,6 +6,9 @@ import { faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons';
 import SaaisHeader from './SaaisHeader';
 
 const ChangePassword = () => {
+  const urlSearchParams = new URLSearchParams(window.location.search);
+  const verificationToken = urlSearchParams.get('verification_token');
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -33,11 +36,9 @@ const ChangePassword = () => {
   }
 
   const handleSubmit = () => {
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    const token = urlSearchParams.get('verification_token');
     try{
         const newPassword = {
-          "token": token,
+          "token": verificationToken,
           "password": password
         } 
         const response = axios.post('http://localhost:8000/change_password/verification_check', newPassword ,  {
