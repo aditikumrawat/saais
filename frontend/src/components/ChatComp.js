@@ -30,8 +30,15 @@ const ChatComp = () => {
   },[])
 
   const generateResult = async() => {
-      const response = await axios.get('http://localhost:8000/');
-      setText(response.data);
+      let inp = document.getElementsByClassName("chat-input")[0].value;
+      console.log(inp);
+      const response = await axios.post('http://localhost:8000/query-model', {"query": inp}, {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      console.log(response.data.text)
+      setText(response.data.text);
   }
 
   return (
@@ -75,9 +82,9 @@ const ChatComp = () => {
           <div className="chat-prompt-chats">
             {text ? 
                 <div className="chats-container">
-                  <div className="chat-prompt-chats-content">
+                  <pre className="chat-prompt-chats-content">
                     {text}
-                  </div> 
+                  </pre> 
                 </div>
                 :
                 <div className="loader-container">
