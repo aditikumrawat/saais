@@ -20,6 +20,7 @@ import requests
 import random
 import smtplib
 from decouple import config
+import re
 
 from ctransformers import AutoModelForCausalLM
 mistral_model = AutoModelForCausalLM.from_pretrained("TheBloke/Mistral-7B-Instruct-v0.1-GGUF", model_file="mistral-7b-instruct-v0.1.Q2_K.gguf", model_type="mistral", max_new_tokens=1000, batch_size=16, context_length=2000, gpu_layers=50)
@@ -29,7 +30,7 @@ mistral_model = AutoModelForCausalLM.from_pretrained("TheBloke/Mistral-7B-Instru
 SECRET_KEY = config("secret")
 ALGORITHM = config("algorithm")
 GOOGLE_CLIENT_ID = config("google_client_id")
-ACCESS_TOKEN_EXPIRE_MINUTES = 50
+ACCESS_TOKEN_EXPIRE_MINUTES = 1440
 
 smtp_port = 587
 smtp_server = config("smtp_server")
@@ -123,14 +124,30 @@ def send_email(recipient_email, user_id):
         print(f"Error: {str(e)}")
 
 
+def is_valid_password(password):
+    if re.search(r'[!#$%^&*<>-]', password) and re.search(r'[a-z]', password) and re.search(r'[A-Z]', password):
+        return True
+    else:
+        return False
+
+
 @app.post("/register_user")
 def register_user(user: User):
     try:
+        if user.email == None or user.username == None or user.password == None:
+            return {"message": "Field cannot be empty."}
+
         existing_user_email = users.find_one({"email": user.email})
         existing_username = users.find_one({"username": user.username})
 
         if existing_user_email or existing_username:
             return {"message": "Email already exits."}
+
+        if is_valid_password(user.password) == False:
+            return {"Error": "Password is not valid."}
+
+        if '@' in user.password:
+            return {"message": "Do not user @ in the password."}
 
         hashed_password = hash_password(user.password)
 
@@ -235,6 +252,12 @@ def generate_username(full_name: str):
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user = authenticate_user(form_data.username, form_data.password)
 
+    if form_data.username == None:
+        return {"message": "Username/Email field can not be empty."}
+
+    if form_data.password == None:
+        return {"message": "Password field can not be empty."}
+
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="Invalid credentials",
@@ -248,7 +271,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     }
 
 
-@app.get('/is_valid')
+@app.get('/is_valid/{token}')
 def is_valid(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -302,7 +325,7 @@ def resend_activation_link(email: str):
         send_email(email, str(user_exists['_id']))
 
     except Exception as e:
-        return {"message": "Invalid Email id"}
+        return {"message": "User doesn't exist"}
 
 
 @app.post('/activate_user/{token}')
@@ -313,9 +336,9 @@ def activate_user(token: str):
 
         if_exists["is_active"] = True
         users.update_one({'_id': if_exists['_id']}, {"$set": if_exists})
-        return {"Message": "Activate the user successfully."}
+        return {"message": "Activate the user successfully"}
     except JWTError:
-        return {"message": "link is alredy expired."}
+        return {"message": "link expired"}
 
 
 @app.get('/forgot_password/send_verification_mail/{recipient_email}')
@@ -349,6 +372,9 @@ def change_password_verification(info: ChangePassword):
         user_info = jwt.decode(info.token, SECRET_KEY, algorithms=ALGORITHM)
         data = users.find_one({'email': user_info['user_id']})
 
+        if data == None:
+            return {"message": "Invalid token"}
+
         updated_info = {
             "full_name": data['full_name'],
             "username": data['username'],
@@ -362,31 +388,20 @@ def change_password_verification(info: ChangePassword):
 
         return {"message": "Password has been updated successfully."}
     except Exception as e:
-        print(e)
-        return {"message": "Link has already expired."}
+        return {"message": "Link expired."}
 
 
 @app.get('/get_user_details/{token}')
 def get_user_using_token(token: str):
-    data = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
-    info = users.find_one({'username': data['sub']})
-    info['_id'] = str(info['_id'])
-    if info:
-        return info
-    return {"message": "User details not found."}
-
-
-@app.post('/edit_user_profile')
-def edit_profile(user: User):
-    is_exists = users.find_one({'email': user.email})
-    print(is_exists)
-
-    if is_exists:
-        users.update_one({'_id': is_exists['_id']},
-                         {'$set': user})
-        return {"message": "User detail updated successfully."}
-
-    raise HTTPException(status_code=404, detail="User not found")
+    try:
+        data = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+        info = users.find_one({'username': data['sub']})
+        info['_id'] = str(info['_id'])
+        if info:
+            return info
+        return {"message": "User details not found."}
+    except Exception as e:
+        return {"message": "Token expired"}
 
 
 @app.put("/edit_user_profile/{token}")
@@ -401,8 +416,9 @@ def update_user(token: str, user: User):
             return {"message": "User detail updated successfully."}
         else:
             raise HTTPException(status_code=404, detail="User not found")
+    except JWTError:
+        return {"message": "Token expired"}
     except Exception as e:
-        print(f"An error occurred: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 

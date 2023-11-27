@@ -1,17 +1,33 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import SaaisHeader from "./SaaisHeader";
 import "../css/ChatComp.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faMessage,
-  faTrashCan,
-  faPen,
-  faPaperPlane,
-} from "@fortawesome/free-solid-svg-icons";
-import BundleComp from "./BundleComp";
+import {faMessage, faTrashCan, faPen, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 
 const ChatComp = () => {
+  const [isTokenValid, setIsTokenValid] = useState(false);
+  const token = localStorage.getItem('accessToken');
+
+  const navigate = useNavigate(); 
+
+  useEffect(() =>{
+    (async () =>{
+      try{
+        const response = await axios.get(`http://localhost:8000/is_valid/${token}`);
+        if(response.data === true){
+          setIsTokenValid(true);
+        }
+        else{
+          navigate('/signin');
+        }
+      }catch (error) {
+        console.error('Error:', error);
+      }
+    })();
+},[token])
+
   const quotesArray = [
     "Whenever you see a successful business, someone once made a courageous decision.",
     "Where do you put the fear when you choose to innovate? The fear is there, but you have to find a place to put it.",
@@ -20,7 +36,8 @@ const ChatComp = () => {
     "Patience: This is the greatest business asset. Wait for the right time to make your moves.",
     "There’s nothing wrong with staying small. You can do big things with a small team.",
   ];
-
+  
+  const [loading,setLoading] = useState(true);
   const [quote, setQuote] = useState('');
   const [text, setText] = useState('');
 
@@ -30,19 +47,14 @@ const ChatComp = () => {
   },[])
 
   const generateResult = async() => {
-      let inp = document.getElementsByClassName("chat-input")[0].value;
-      console.log(inp);
-      const response = await axios.post('http://localhost:8000/query-model', {"query": inp}, {
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-      console.log(response.data.text)
-      setText(response.data.text);
+      setLoading(true);
+      const response = await axios.get('http://localhost:8000/');
+
+      setText(response.data);
   }
 
-  return (
-    <div className="chat-comp">
+  return ( 
+      <div className="chat-comp">
       <SaaisHeader />
       <div className="chat-comp-container">
         <div className="chat-comp-history">
@@ -87,6 +99,7 @@ const ChatComp = () => {
                   </pre> 
                 </div>
                 :
+                loading ? 
                 <div className="loader-container">
                   <div className="loader-atom">
                     <div className="loader-line line-1">
@@ -100,6 +113,9 @@ const ChatComp = () => {
                     </div>
                   </div>
                   <div className="quote">{quote}</div>
+                </div> :
+                <div className="chat-welcome-container">
+                    Get any help related to your product
                 </div>
             }
               {/* <BundleComp /> */}
@@ -125,7 +141,7 @@ const ChatComp = () => {
               className="chat-input"
               placeholder="Get the info about your product"
             />
-            <FontAwesomeIcon onClick={generateResult} className="send-icon" icon={faPaperPlane} />
+            <FontAwesomeIcon  onClick={generateResult} className="send-icon" icon={faPaperPlane} />
           </div>
         </div>
       </div>
