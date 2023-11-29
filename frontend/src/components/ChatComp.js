@@ -46,7 +46,8 @@ const ChatComp = () => {
     setQuote(quotesArray[randomNumber]);
   },[])
 
-  const generateResult = async() => {
+  const generateResult = async (e) => {
+      e.preventDefault();
       setLoading(true);
       const response = await axios.get('http://localhost:8000/');
 
@@ -136,12 +137,16 @@ const ChatComp = () => {
               </div> */}
           </div>
           <div className="chat-input-div">
+            <form style={{width: '100%'}} onSubmit={generateResult}>
             <FontAwesomeIcon className="pen-icon" icon={faPen} />
             <input
               className="chat-input"
               placeholder="Get the info about your product"
             />
-            <FontAwesomeIcon  onClick={generateResult} className="send-icon" icon={faPaperPlane} />
+            <button type="submit" style={{border: 'none'}}>
+            <FontAwesomeIcon className="send-icon" icon={faPaperPlane} />
+            </button>
+            </form>
           </div>
         </div>
       </div>
