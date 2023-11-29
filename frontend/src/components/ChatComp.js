@@ -9,8 +9,21 @@ import {faMessage, faTrashCan, faPen, faPaperPlane } from "@fortawesome/free-sol
 const ChatComp = () => {
   const [isTokenValid, setIsTokenValid] = useState(false);
   const token = localStorage.getItem('accessToken');
+  const [loading,setLoading] = useState(false);
+  const [quote, setQuote] = useState('');
+  const [text, setText] = useState('');
+  const [chatInput, setChatInput] = useState('');
 
   const navigate = useNavigate(); 
+
+  const quotesArray = [
+    "Whenever you see a successful business, someone once made a courageous decision.",
+    "Where do you put the fear when you choose to innovate? The fear is there, but you have to find a place to put it.",
+    "The Golden Rule for Every Business is this: Put Yourself in your Customer’s Place.",
+    "Never Give up. Today is hard and tomorrow will be Worse, but the day after Tomorrow will be Sunshine.",
+    "Patience: This is the greatest business asset. Wait for the right time to make your moves.",
+    "There’s nothing wrong with staying small. You can do big things with a small team.",
+  ];
 
   useEffect(() =>{
     (async () =>{
@@ -28,29 +41,21 @@ const ChatComp = () => {
     })();
 },[token])
 
-  const quotesArray = [
-    "Whenever you see a successful business, someone once made a courageous decision.",
-    "Where do you put the fear when you choose to innovate? The fear is there, but you have to find a place to put it.",
-    "The Golden Rule for Every Business is this: Put Yourself in your Customer’s Place.",
-    "Never Give up. Today is hard and tomorrow will be Worse, but the day after Tomorrow will be Sunshine.",
-    "Patience: This is the greatest business asset. Wait for the right time to make your moves.",
-    "There’s nothing wrong with staying small. You can do big things with a small team.",
-  ];
-  
-  const [loading,setLoading] = useState(true);
-  const [quote, setQuote] = useState('');
-  const [text, setText] = useState('');
-
   useEffect(()=>{
     const randomNumber = Math.floor(Math.random() * quotesArray.length);
     setQuote(quotesArray[randomNumber]);
   },[])
 
+  const inputchange = (e) => {
+    const { value } = e.target;
+    setChatInput(value);
+  }
+
   const generateResult = async (e) => {
       e.preventDefault();
       setLoading(true);
       const response = await axios.post('http://localhost:8000/query-model',
-      {"query": document.getElementsByClassName("chat-input")[0].value},
+      {"query": chatInput},
       {
         headers: {
           'Content-Type': 'application/json',
@@ -98,6 +103,7 @@ const ChatComp = () => {
           </div>
         </div>
         <div className="chat-comp-prompt">
+          {loading ? <div className="chat-heading-div">{chatInput}</div> : null}
           <div className="chat-prompt-chats">
             {text ? 
                 <div className="chats-container">
@@ -122,38 +128,23 @@ const ChatComp = () => {
                   <div className="quote">{quote}</div>
                 </div> :
                 <div className="chat-welcome-container">
-                    Get any help related to your product
+                    Tell us about your business idea
                 </div>
             }
-              {/* <BundleComp /> */}
-              {/* <div className="chat-prompt-chats-content">
-                Lorem Ipsum has been the industry's standard dummy text ever
-                since the 1500s, when an unknown printer took a galley of type
-                and scrambled it to make a type specimen book. It has survived
-                not only five centuries, but also the leap into electronic
-                typesetting, remaining essentially unchanged.andard dummy text
-                ever since the 1500s, when an unknown printer took a galley of
-                type and scrambled it to make a type specimen book. It has
-                survived not only five centuries, but also the leap into
-                electronic typesetting, remaining essentially unchanged. It was
-                popularised in the 1960s with the release of Letraset sheets
-                containing Lorem Ipsum passages, and more recently with desktop
-                publishing software like Aldus PageMaker including versions of
-                Lorem Ipsum.
-              </div> */}
           </div>
-          <div className="chat-input-div">
+          {loading ? null: <div className="chat-input-div">
             <form style={{width: '100%'}} onSubmit={generateResult}>
             <FontAwesomeIcon className="pen-icon" icon={faPen} />
             <input
-              className="chat-input"
+              className="chat-input" name="chatInput"
               placeholder="Get the info about your product"
+              value={chatInput} onChange={inputchange}
             />
             <button type="submit" style={{border: 'none'}}>
             <FontAwesomeIcon className="send-icon" icon={faPaperPlane} />
             </button>
             </form>
-          </div>
+          </div>}
         </div>
       </div>
     </div>

@@ -23,7 +23,7 @@ from decouple import config
 import re
 
 from ctransformers import AutoModelForCausalLM
-mistral_model = AutoModelForCausalLM.from_pretrained("TheBloke/Mistral-7B-Instruct-v0.1-GGUF", model_file="mistral-7b-instruct-v0.1.Q2_K.gguf", model_type="mistral", max_new_tokens=1000, batch_size=16, context_length=2000, gpu_layers=50)
+mistral_model = AutoModelForCausalLM.from_pretrained("TheBloke/Mistral-7B-Instruct-v0.1-GGUF", model_file="mistral-7b-instruct-v0.1.Q2_K.gguf", model_type="mistral", max_new_tokens=1000, batch_size=16, context_length=2000)
 
 
 
