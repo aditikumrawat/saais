@@ -8,7 +8,7 @@ from decouple import config
 from schema.schemas import list_User
 from config.database import users
 from bson import ObjectId
-from models.models import hash_password
+from models.models import hash_password, Query
 from bson import ObjectId
 from itertools import permutations
 from google.auth.transport import requests as gr
@@ -21,6 +21,10 @@ import random
 import smtplib
 from decouple import config
 import re
+
+from ctransformers import AutoModelForCausalLM
+mistral_model = AutoModelForCausalLM.from_pretrained("TheBloke/Mistral-7B-Instruct-v0.1-GGUF", model_file="mistral-7b-instruct-v0.1.Q2_K.gguf", model_type="mistral", max_new_tokens=1000, batch_size=16, context_length=2000, gpu_layers=50)
+
 
 
 SECRET_KEY = config("secret")
@@ -416,3 +420,9 @@ def update_user(token: str, user: User):
         return {"message": "Token expired"}
     except Exception as e:
         raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@app.post("/query-model")
+def query(query: Query):
+    resp = mistral_model(f"<s>[INST] Write a guide for starting a business of {query.query} in 1000 words. Use only following three sections: 1) Overview 2) Challenges 3) Strategies [/INST]")
+    return {"text": resp}
