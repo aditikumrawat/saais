@@ -4,14 +4,12 @@ from fastapi import UploadFile
 from passlib.context import CryptContext
 from typing import Optional, List
 
-
 class User(BaseModel):
     full_name: str = Field(default=None)
     email: EmailStr = Field(default=None)
     username: str = Field(default=None)
     password: str = Field(default=None)
     phone_no : str =Field(default=None)
-
     is_active: bool = Field(default=False)
 
 

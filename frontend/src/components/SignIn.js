@@ -14,6 +14,8 @@ const SignIn = () => {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
 
+  const [errorMsg, setErrorMsg] = useState("");
+
   const[passwordVisiblility,setPasswordVisiblility] = useState(false);
   const passwordInput = useRef();
 
@@ -47,6 +49,7 @@ const SignIn = () => {
       const response = await axios.get(`http://localhost:8000/generate_username/${credentialsDecoded.name}`);
       username = response.data;
     }catch (error) {
+      setErrorMsg(error.message);
       console.error('Error:', error);
     }
     const googleSigninData = {
@@ -66,6 +69,7 @@ const SignIn = () => {
       navigate('/chatComp');
     }
     catch (error) {
+      setErrorMsg(error.message);
       console.error('Error:', error);
     }
   }
@@ -93,6 +97,7 @@ const SignIn = () => {
       navigate('/chatComp');
       
     } catch (error) {
+      setErrorMsg(error.message);
       console.error(error);
     }
   };
@@ -120,6 +125,7 @@ const SignIn = () => {
           <div className='signin-links-div'>
             <span style={{textAlign:'center'}} >Don't have an account? <Link className='signin-links' to='/signup'>Register here</Link></span>
             <span><Link className='signin-links' to='/forgetPassword'>Forget password?</Link></span>
+            <div className='error-msg'>{errorMsg || ''}</div>
           </div>
         </form>
       </div>

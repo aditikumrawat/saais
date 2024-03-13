@@ -172,6 +172,11 @@
   animation: gif 4s linear;
 }
 
+.error-msg{
+  color: red;
+  font-size: 15px;
+}
+
 @keyframes gif{
   0%{
     opacity: 0;

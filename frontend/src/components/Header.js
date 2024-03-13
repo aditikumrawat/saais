@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import user_image_header from "../images/user_image_header.jpg";
 import { useEffect, useState } from "react";
+import saaisLogo from '../images/saaisLogo.jpg'
 
 function Header() {
   const [username, setUsername] = useState('');
@@ -41,7 +42,7 @@ function Header() {
 
   return (
     <div className="header">
-      <div className="logo">SAAIS</div>
+      <div className="logo"><img style={{width:'25px',height:'25px',borderRadius:'5px',marginRight:'10px'}} src={saaisLogo} alt="img"/>SAAIS</div>
       <div className="menu">
         {username ? (
           <div className="header-user">

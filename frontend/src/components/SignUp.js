@@ -9,16 +9,19 @@ import SignupLottieAnimation from "./SignupLottieAnimation";
 import "../css/SignUp.css";
 
 const SignUp = () => {
+
+  const [usernameCheckIcon, setUsernamecheckIcon] = useState(faCheck);
+  const [passwordVisiblilityIcon, setPasswordVisiblilityIcon] = useState(faEye);
+
+  const [errorMsg, setErrorMsg] = useState("");
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     username: '',
     password: '',
-    confirmPassword: ''
-  });
-
-  const [usernameCheckIcon, setUsernamecheckIcon] = useState(faCheck);
-  const [passwordVisiblilityIcon, setPasswordVisiblilityIcon] = useState(faEye);
+    confirmPassword :''
+  })
 
   const passwordInput = useRef();
 
@@ -54,6 +57,7 @@ const SignUp = () => {
         }
       }
       catch (error) {
+        setErrorMsg(error.message);
         console.error('Error:', error);
       }
     }
@@ -68,6 +72,7 @@ const SignUp = () => {
       });
     }
     catch (error) {
+      setErrorMsg(error.message);
       console.error('Error:', error);
     }
   }
@@ -99,6 +104,7 @@ const SignUp = () => {
       console.log('Response:', response.data);
       navigate('/beforeActivation');
     } catch (error) {
+      setErrorMsg(error.message);
       console.error('Error:', error);
     }
   }
@@ -139,6 +145,7 @@ const SignUp = () => {
           </div>
           <button onClick={() => handleSubmit()} type="submit" className="signup-button" disabled={!isFormValid()}>Register</button>
           <span className="signup-links-div">Already a member? <Link className='signup-links' to='/signin'> Login here</Link></span>
+          <div className='error-msg'>{errorMsg || ''}</div>
         </form>
         <div className="signup-animation">
           <SignupLottieAnimation />
